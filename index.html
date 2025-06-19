@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Image Card Deck Drawer</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      padding: 2em;
+      background: #f0f0f0;
+    }
+    #drop-area {
+      border: 3px dashed #ccc;
+      padding: 30px;
+      margin-bottom: 20px;
+      border-radius: 10px;
+      background: white;
+    }
+    #card {
+      min-height: 300px;
+      margin: 20px auto;
+      width: 300px;
+      border: 2px solid #ccc;
+      background: #fff;
+      border-radius: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    #card img {
+      max-width: 100%;
+      max-height: 100%;
+      border-radius: 10px;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 10px;
+      font-size: 1em;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+    }
+    #drawBtn { background-color: #4CAF50; color: white; }
+    #resetBtn { background-color: #f44336; color: white; }
+  </style>
+</head>
+<body>
+
+  <h1>Upload Image Cards</h1>
+
+  <div id="drop-area">
+    <p>Drag and drop .png card images here or use the file picker:</p>
+    <input type="file" id="fileElem" accept="image/png" multiple>
+  </div>
+
+  <div id="card">Upload your cards above</div>
+
+  <button id="drawBtn" disabled>Draw Card</button>
+  <button id="resetBtn" disabled>Reset Deck</button>
+
+  <script>
+    let originalDeck = [];
+    let currentDeck = [];
+
+    const fileElem = document.getElementById("fileElem");
+    const drawBtn = document.getElementById("drawBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const cardDiv = document.getElementById("card");
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+
+    function loadImages(files) {
+      const images = Array.from(files).filter(file => file.type === "image/png");
+
+      if (images.length === 0) {
+        alert("Please upload .png images only.");
+        return;
+      }
+
+      const promises = images.map(file => {
+        return new Promise(resolve => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.readAsDataURL(file); // Base64
+        });
+      });
+
+      Promise.all(promises).then(results => {
+        originalDeck = [...results];
+        currentDeck = [...results];
+        shuffle(currentDeck);
+        cardDiv.innerHTML = "Deck loaded. Click 'Draw Card'.";
+        drawBtn.disabled = false;
+        resetBtn.disabled = false;
+      });
+    }
+
+    fileElem.addEventListener("change", () => {
+      loadImages(fileElem.files);
+    });
+
+    drawBtn.addEventListener("click", () => {
+      if (currentDeck.length === 0) {
+        cardDiv.innerHTML = "Deck is empty!";
+        return;
+      }
+      const imgSrc = currentDeck.pop();
+      cardDiv.innerHTML = `<img src="${imgSrc}" alt="Card Image">`;
+    });
+
+    resetBtn.addEventListener("click", () => {
+      currentDeck = [...originalDeck];
+      shuffle(currentDeck);
+      cardDiv.innerHTML = "Deck reset. Click 'Draw Card'.";
+    });
+  </script>
+
+</body>
+</html>
