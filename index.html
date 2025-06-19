@@ -4,51 +4,62 @@
   <meta charset="UTF-8" />
   <title>Draw Cards - Two Decks</title>
   <style>
-    body {
-      font-family: sans-serif;
-      background: #f4f4f4;
-      text-align: center;
-      padding: 2em;
-    }
-    .deck-container {
-      display: inline-block;
-      background: white;
-      margin: 20px;
-      padding: 20px;
-      border-radius: 10px;
-      width: 300px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
-    .card {
-      height: 300px;
-      margin: 10px 0;
-      border-radius: 10px;
-      background: #eee;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .card img {
-      max-width: 100%;
-      max-height: 100%;
-      border-radius: 10px;
-    }
-    button {
-      padding: 10px 20px;
-      margin: 5px;
-      border-radius: 8px;
-      font-size: 1em;
-      border: none;
-      cursor: pointer;
-    }
-    .draw { background: #4CAF50; color: white; }
-    .reset { background: #f44336; color: white; }
+body {
+  font-family: sans-serif;
+  background: #f4f4f4;
+  text-align: center;
+  padding: 2em;
+}
+
+.deck-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+.deck-container {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 300px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.card {
+  height: 300px;
+  margin: 10px 0;
+  border-radius: 10px;
+  background: #eee;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card img {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 10px;
+}
+
+button {
+  padding: 10px 20px;
+  margin: 5px;
+  border-radius: 8px;
+  font-size: 1em;
+  border: none;
+  cursor: pointer;
+}
+
+.draw { background: #4CAF50; color: white; }
+.reset { background: #f44336; color: white; }
   </style>
 </head>
 <body>
 
   <h1>Yapping Youths</h1>
 
+<div class="deck-wrapper">
   <div class="deck-container">
     <h2>Deck A (100 cards)</h2>
     <div id="cardA" class="card">Deck A ready</div>
@@ -62,6 +73,7 @@
     <button class="draw" onclick="drawCard('B')">Draw</button>
     <button class="reset" onclick="resetDeck('B')">Reset</button>
   </div>
+</div>
 
   <script>
     const preloadImages = async (folder, prefix, count) => {
