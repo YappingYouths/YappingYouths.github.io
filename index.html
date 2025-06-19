@@ -6,10 +6,12 @@
   <style>
 body {
   font-family: sans-serif;
-  background: #f4f4f4;
+  background: #2f3136; /* Discord dark theme */
+  color: #ffffff;
   text-align: center;
   padding: 2em;
 }
+
 
 .deck-wrapper {
   display: flex;
@@ -19,11 +21,11 @@ body {
 }
 
 .deck-container {
-  background: white;
+  background: #36393f; /* Discord card color */
   padding: 20px;
   border-radius: 10px;
   width: 300px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
 
 .card {
@@ -50,6 +52,19 @@ button {
   border: none;
   cursor: pointer;
 }
+
+    .card {
+  background: #202225; /* deeper dark for card area */
+}
+
+button.draw {
+  background: #5865f2; /* Discord blurple */
+}
+
+button.reset {
+  background: #ed4245; /* Discord danger red */
+}
+
 
 .draw { background: #4CAF50; color: white; }
 .reset { background: #f44336; color: white; }
