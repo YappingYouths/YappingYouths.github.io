@@ -64,6 +64,27 @@ button.reset {
   background: #ed4245; /* Discord danger red */
 }
 
+.rules-box {
+  background-color: #36393f;
+  color: #ffffff;
+  padding: 20px;
+  margin-top: 40px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  text-align: left;
+  font-size: 1em;
+  line-height: 1.6;
+}
+
+.rules-box h2 {
+  margin-top: 0;
+  font-size: 1.4em;
+  color: #ffffff;
+}
 
 .draw { background: #4CAF50; color: white; }
 .reset { background: #f44336; color: white; }
@@ -159,6 +180,16 @@ button.reset {
 
     init();
   </script>
+
+  <div class="rules-box">
+  <h2>Game Rules</h2>
+  <p>
+    Draw a black card and a green card.<br><br>
+    Players must answer the black card with an explanation, and must follow the rule of the green card.<br><br>
+    The judge picks the best explanation — that player receives a point.<br><br>
+    First to 4 points wins.
+  </p>
+</div>
 
 </body>
 </html>
