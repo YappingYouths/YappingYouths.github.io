@@ -1,52 +1,138 @@
-<script>
-  // Create deck A with 100 cards: a1.png ... a100.png
-  const deckAImages = [];
-  for (let i = 1; i <= 100; i++) {
-    deckAImages.push(`deckA/a${i}.png`);
-  }
-
-  // Create deck B with 50 cards: b1.png ... b50.png
-  const deckBImages = [];
-  for (let i = 1; i <= 50; i++) {
-    deckBImages.push(`deckB/b${i}.png`);
-  }
-
-  let currentDeckA = [...deckAImages];
-  let currentDeckB = [...deckBImages];
-
-  function shuffle(deck) {
-    for (let i = deck.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [deck[i], deck[j]] = [deck[j], deck[i]];
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Draw Cards - Two Decks</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f4f4f4;
+      text-align: center;
+      padding: 2em;
     }
-  }
-
-  shuffle(currentDeckA);
-  shuffle(currentDeckB);
-
-  function drawCard(deckId) {
-    let deck = deckId === 'A' ? currentDeckA : currentDeckB;
-    let cardDiv = document.getElementById(`card${deckId}`);
-
-    if (deck.length === 0) {
-      cardDiv.innerHTML = "Deck is empty! Resetting...";
-      resetDeck(deckId);
-      return;
+    .deck-container {
+      display: inline-block;
+      background: white;
+      margin: 20px;
+      padding: 20px;
+      border-radius: 10px;
+      width: 300px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
+    .card {
+      height: 300px;
+      margin: 10px 0;
+      border-radius: 10px;
+      background: #eee;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .card img {
+      max-width: 100%;
+      max-height: 100%;
+      border-radius: 10px;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 5px;
+      border-radius: 8px;
+      font-size: 1em;
+      border: none;
+      cursor: pointer;
+    }
+    .draw { background: #4CAF50; color: white; }
+    .reset { background: #f44336; color: white; }
+  </style>
+</head>
+<body>
 
-    const card = deck.pop();
-    cardDiv.innerHTML = `<img src="${card}" alt="Card ${deckId}">`;
-  }
+  <h1>Draw Cards from Two Decks</h1>
 
-  function resetDeck(deckId) {
-    if (deckId === 'A') {
+  <div class="deck-container">
+    <h2>Deck A (100 cards)</h2>
+    <div id="cardA" class="card">Deck A ready</div>
+    <button class="draw" onclick="drawCard('A')">Draw</button>
+    <button class="reset" onclick="resetDeck('A')">Reset</button>
+  </div>
+
+  <div class="deck-container">
+    <h2>Deck B (50 cards)</h2>
+    <div id="cardB" class="card">Deck B ready</div>
+    <button class="draw" onclick="drawCard('B')">Draw</button>
+    <button class="reset" onclick="resetDeck('B')">Reset</button>
+  </div>
+
+  <script>
+    const preloadImages = async (folder, prefix, count) => {
+      const validImages = [];
+      for (let i = 1; i <= count; i++) {
+        const imgPath = `${folder}/${prefix}${i}.png`;
+        const img = new Image();
+        const exists = await new Promise((resolve) => {
+          img.onload = () => resolve(true);
+          img.onerror = () => resolve(false);
+          img.src = imgPath;
+        });
+        if (exists) validImages.push(imgPath);
+      }
+      return validImages;
+    };
+
+    let deckAImages = [], deckBImages = [];
+    let currentDeckA = [], currentDeckB = [];
+
+    const shuffle = (deck) => {
+      for (let i = deck.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [deck[i], deck[j]] = [deck[j], deck[i]];
+      }
+    };
+
+    const drawCard = (deckId) => {
+      let deck = deckId === 'A' ? currentDeckA : currentDeckB;
+      let cardDiv = document.getElementById(`card${deckId}`);
+
+      if (deck.length === 0) {
+        cardDiv.innerHTML = "Deck is empty!";
+        return;
+      }
+
+      const card = deck.pop();
+      cardDiv.innerHTML = `<img src="${card}" alt="Card ${deckId}">`;
+    };
+
+    const resetDeck = (deckId) => {
+      if (deckId === 'A') {
+        currentDeckA = [...deckAImages];
+        shuffle(currentDeckA);
+        document.getElementById("cardA").innerHTML = "Deck A reset.";
+      } else {
+        currentDeckB = [...deckBImages];
+        shuffle(currentDeckB);
+        document.getElementById("cardB").innerHTML = "Deck B reset.";
+      }
+    };
+
+    const init = async () => {
+      document.getElementById("cardA").innerText = "Loading Deck A...";
+      document.getElementById("cardB").innerText = "Loading Deck B...";
+      
+      deckAImages = await preloadImages("deckA", "a", 100);
+      deckBImages = await preloadImages("deckB", "b", 50);
+
       currentDeckA = [...deckAImages];
-      shuffle(currentDeckA);
-      document.getElementById("cardA").innerHTML = "Deck A reset.";
-    } else {
       currentDeckB = [...deckBImages];
+
+      shuffle(currentDeckA);
       shuffle(currentDeckB);
-      document.getElementById("cardB").innerHTML = "Deck B reset.";
-    }
-  }
-</script>
+
+      document.getElementById("cardA").innerText = "Deck A ready.";
+      document.getElementById("cardB").innerText = "Deck B ready.";
+    };
+
+    init();
+  </script>
+
+</body>
+</html>
