@@ -1,3 +1,4 @@
+
 <!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -154,12 +155,9 @@ button.score.minus { background: #ff9800; color: white; }
     <button class="draw" onclick="drawCard('B')">Draw</button>
     <button class="reset" onclick="resetDeck('B')">Reset</button>
   </div>
-</div>
+<button onclick="nextJudge()" class="draw">Next Judge</button>
 
-<div class="scoreboard">
-  <h2>Scoreboard</h2>
-  <div id="scoreboard"></div>
-</div>
+$1> <h2>Scoreboard</h2> <div id="scoreboard"></div> </div>
 
 <div class="rules-box">
   <h2>Game Rules</h2>
@@ -311,8 +309,14 @@ button.score.minus { background: #ff9800; color: white; }
     }
 
     function updateJudgeDisplay() {
-      const judgeName = players[currentJudgeIndex]?.name || "";
-      document.getElementById("judge-display").textContent = `Current Judge: ${judgeName}`;
+  const judgeName = players[currentJudgeIndex]?.name || "";
+  document.getElementById("judge-display").textContent = `Current Judge: ${judgeName}`;
+}
+
+function nextJudge() {
+  currentJudgeIndex = (currentJudgeIndex + 1) % players.length;
+  updateJudgeDisplay();
+}`;
     }
 
     async function init() {
@@ -320,7 +324,7 @@ button.score.minus { background: #ff9800; color: white; }
       document.getElementById("cardB").innerText = "Loading Green Deck...";
 
       deckAImages = await preloadImages("deckA", "a", 100);
-      deckBImages = await preloadImages("deckB", "b", 50, "jpg");
+      deckBImages = await preloadImages("deckB", "b", 50, "png");
 
       currentDeckA = [...deckAImages];
       currentDeckB = [...deckBImages];
