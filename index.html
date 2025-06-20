@@ -131,6 +131,196 @@
   </style>
 </head>
 <body>
-<!-- BODY CONTENT OMITTED FOR BREVITY -->
+  <h1>Card Game</h1>
+
+  <div id="player-setup">
+    <h2>Enter Player Names (3–12)</h2>
+    <div id="player-inputs"></div>
+    <button onclick="addPlayerInput()">+ Add Player</button>
+    <button onclick="startGame()">Start Game</button>
+  </div>
+
+  <div id="game-area" style="display:none;">
+    <div class="deck-wrapper">
+      <div class="deck-container">
+        <h2>Black Deck</h2>
+        <div id="cardA" class="card">Deck A ready</div>
+        <button class="draw" onclick="drawCard('A')">Draw</button>
+        <button class="reset" onclick="resetDeck('A')">Reset</button>
+      </div>
+      <div class="deck-container">
+        <h2>Green Deck</h2>
+        <div id="cardB" class="card">Deck B ready</div>
+        <button class="draw" onclick="drawCard('B')">Draw</button>
+        <button class="reset" onclick="resetDeck('B')">Reset</button>
+      </div>
+    </div>
+
+    <div class="scoreboard">
+      <h2>Scoreboard</h2>
+      <div id="scoreboard"></div>
+    </div>
+
+    <div class="rules-box">
+      <h2>Game Rules</h2>
+      <p>
+        Draw a black card and a green card.<br><br>
+        Players must answer the black card with an explanation, and must follow the rule of the green card.<br><br>
+        The judge picks the best explanation — that player receives a point.<br><br>
+        First to 4 points wins.
+      </p>
+    </div>
+  </div>
+
+  <script>
+    const preloadImages = async (folder, prefix, count, ext = "png") => {
+      const validImages = [];
+      for (let i = 1; i <= count; i++) {
+        const imgPath = `${folder}/${prefix}${i}.${ext}`;
+        const img = new Image();
+        const exists = await new Promise((resolve) => {
+          img.onload = () => resolve(true);
+          img.onerror = () => resolve(false);
+          img.src = imgPath;
+        });
+        if (exists) validImages.push(imgPath);
+      }
+      return validImages;
+    };
+
+    let deckAImages = [], deckBImages = [];
+    let currentDeckA = [], currentDeckB = [];
+
+    const shuffle = (deck) => {
+      for (let i = deck.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [deck[i], deck[j]] = [deck[j], deck[i]];
+      }
+    };
+
+    const drawCard = (deckId) => {
+      let deck = deckId === 'A' ? currentDeckA : currentDeckB;
+      let cardDiv = document.getElementById(`card${deckId}`);
+
+      if (deck.length === 0) {
+        cardDiv.innerHTML = "Deck is empty!";
+        return;
+      }
+
+      const card = deck.pop();
+      cardDiv.innerHTML = `<img src="${card}" alt="Card ${deckId}">`;
+    };
+
+    const resetDeck = (deckId) => {
+      if (deckId === 'A') {
+        currentDeckA = [...deckAImages];
+        shuffle(currentDeckA);
+        document.getElementById("cardA").innerHTML = "Deck A reset.";
+      } else {
+        currentDeckB = [...deckBImages];
+        shuffle(currentDeckB);
+        document.getElementById("cardB").innerHTML = "Deck B reset.";
+      }
+    };
+
+    const MAX_PLAYERS = 12;
+    let players = [];
+
+    function addPlayerInput() {
+      const container = document.getElementById("player-inputs");
+      if (container.children.length < MAX_PLAYERS) {
+        const input = document.createElement("input");
+        input.placeholder = "Player name";
+        container.appendChild(input);
+      }
+    }
+
+    function startGame() {
+      const inputs = document.querySelectorAll("#player-inputs input");
+      players = [];
+      inputs.forEach(input => {
+        if (input.value.trim()) {
+          players.push({ name: input.value.trim(), score: 0 });
+        }
+      });
+
+      if (players.length < 3 || players.length > 12) {
+        alert("Please enter between 3 and 12 player names.");
+        return;
+      }
+
+      document.getElementById("player-setup").style.display = "none";
+      document.getElementById("game-area").style.display = "block";
+      renderScoreboard();
+      init();
+    }
+
+    function renderScoreboard() {
+      const board = document.getElementById("scoreboard");
+      board.innerHTML = "";
+      players.forEach((player, index) => {
+        const row = document.createElement("div");
+        row.className = "player-row";
+
+        const name = document.createElement("div");
+        name.className = "player-name-score";
+        name.textContent = `${player.name}: ${player.score}`;
+
+        if (player.score >= 4) {
+          name.className += " winner";
+          name.textContent = `${player.name} wins! 🎉`;
+        }
+
+        const buttons = document.createElement("div");
+        buttons.className = "score-buttons";
+
+        const minusBtn = document.createElement("button");
+        minusBtn.textContent = "−1";
+        minusBtn.className = "score minus";
+        minusBtn.disabled = player.score <= 0;
+        minusBtn.onclick = () => {
+          if (player.score > 0) {
+            player.score--;
+            renderScoreboard();
+          }
+        };
+
+        const plusBtn = document.createElement("button");
+        plusBtn.textContent = "+1";
+        plusBtn.className = "score";
+        plusBtn.disabled = player.score >= 4;
+        plusBtn.onclick = () => {
+          player.score++;
+          renderScoreboard();
+        };
+
+        buttons.appendChild(minusBtn);
+        buttons.appendChild(plusBtn);
+
+        row.appendChild(name);
+        row.appendChild(buttons);
+        board.appendChild(row);
+      });
+    }
+
+    async function init() {
+      document.getElementById("cardA").innerText = "Loading Black Deck...";
+      document.getElementById("cardB").innerText = "Loading Green Deck...";
+
+      deckAImages = await preloadImages("deckA", "a", 100);
+      deckBImages = await preloadImages("deckB", "b", 50, "jpg");
+
+      currentDeckA = [...deckAImages];
+      currentDeckB = [...deckBImages];
+
+      shuffle(currentDeckA);
+      shuffle(currentDeckB);
+
+      document.getElementById("cardA").innerText = "Deck A ready.";
+      document.getElementById("cardB").innerText = "Deck B ready.";
+    }
+
+    for (let i = 0; i < 3; i++) addPlayerInput();
+  </script>
 </body>
 </html>
