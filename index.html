@@ -141,7 +141,7 @@ button.score.minus { background: #ff9800; color: white; }
     <button onclick="addPlayerInput()">+ Add Player</button>
     <button onclick="startGame()">Start Game</button>
   </div>  <div id="game-area" style="display:none;">
-    <div id="judge-display" class="judge-display"></div><div class="deck-wrapper">
+    <div id="judge-display" class="judge-display" style="display:none;"></div><div class="deck-wrapper">
   <div class="deck-container">
     <h2>Black Deck</h2>
     <div id="cardA" class="card">Deck A ready</div>
@@ -241,6 +241,7 @@ $1> <h2>Scoreboard</h2> <div id="scoreboard"></div> </div>
     }
 
     function startGame() {
+  document.getElementById("judge-display").style.display = "block";
       const inputs = document.querySelectorAll("#player-inputs input");
       players = [];
       inputs.forEach(input => {
