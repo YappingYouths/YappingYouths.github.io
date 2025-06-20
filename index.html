@@ -96,8 +96,15 @@
       margin-bottom: 10px;
     }
 
-    .player-row span {
+    .player-name-score {
+      flex-grow: 1;
+      text-align: left;
       font-weight: bold;
+    }
+
+    .score-buttons {
+      display: flex;
+      gap: 5px;
     }
 
     #player-setup input {
@@ -271,22 +278,17 @@
         const row = document.createElement("div");
         row.className = "player-row";
 
-        const name = document.createElement("span");
+        const name = document.createElement("div");
+        name.className = "player-name-score";
         name.textContent = `${player.name}: ${player.score}`;
 
         if (player.score >= 4) {
-          name.className = "winner";
+          name.className += " winner";
           name.textContent = `${player.name} wins! 🎉`;
         }
 
-        const plusBtn = document.createElement("button");
-        plusBtn.textContent = "+1";
-        plusBtn.className = "score";
-        plusBtn.disabled = player.score >= 4;
-        plusBtn.onclick = () => {
-          player.score++;
-          renderScoreboard();
-        };
+        const buttons = document.createElement("div");
+        buttons.className = "score-buttons";
 
         const minusBtn = document.createElement("button");
         minusBtn.textContent = "−1";
@@ -299,9 +301,20 @@
           }
         };
 
+        const plusBtn = document.createElement("button");
+        plusBtn.textContent = "+1";
+        plusBtn.className = "score";
+        plusBtn.disabled = player.score >= 4;
+        plusBtn.onclick = () => {
+          player.score++;
+          renderScoreboard();
+        };
+
+        buttons.appendChild(minusBtn);
+        buttons.appendChild(plusBtn);
+
         row.appendChild(name);
-        row.appendChild(minusBtn);
-        row.appendChild(plusBtn);
+        row.appendChild(buttons);
         board.appendChild(row);
       });
     }
