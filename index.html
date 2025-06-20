@@ -67,7 +67,6 @@
 
     input[type="number"],
     input[type="text"] {
-      width: 100%;
       padding: 0.5em;
       border-radius: 4px;
       border: none;
@@ -76,15 +75,15 @@
     }
 
     button {
-      margin-top: 1.5em;
+      margin-top: 1em;
       background-color: var(--discord-blurple);
       color: var(--discord-light);
       border: none;
-      padding: 0.7em 1.5em;
+      padding: 0.5em 1em;
       font-weight: bold;
       cursor: pointer;
       border-radius: 6px;
-      font-size: 1.1em;
+      font-size: 1em;
       transition: background-color 0.3s ease;
     }
 
@@ -246,8 +245,12 @@
   <div id="splashScreen">
     <h2>Enter Player Info</h2>
     <div class="player-count-group">
-      <label for="playerCount">Number of Players (3-12):</label>
-      <input type="number" id="playerCount" min="3" max="12" value="3" />
+      <label>Number of Players (3-12):</label>
+      <div style="display: flex; gap: 1em; align-items: center; margin-top: 0.5em;">
+        <button type="button" onclick="changePlayerCount(-1)">–</button>
+        <input type="number" id="playerCount" min="3" max="12" value="3" readonly style="text-align: center; width: 50px;" />
+        <button type="button" onclick="changePlayerCount(1)">+</button>
+      </div>
     </div>
     <div id="playerNamesInputs"></div>
     <button id="startGameBtn">Start Game</button>
@@ -289,10 +292,16 @@
     const greenCardDiv = document.getElementById('greenCard');
     const nextRoundBtn = document.getElementById('nextRoundBtn');
 
+    function changePlayerCount(delta) {
+      let count = Number(playerCountInput.value);
+      count = Math.max(3, Math.min(12, count + delta));
+      playerCountInput.value = count;
+      createPlayerNameInputs();
+    }
+
     function createPlayerNameInputs() {
       playerNamesInputs.innerHTML = "";
-      let count = Math.max(3, Math.min(12, Number(playerCountInput.value)));
-      playerCountInput.value = count;
+      let count = Number(playerCountInput.value);
       for (let i = 0; i < count; i++) {
         const label = document.createElement('label');
         label.textContent = `Player ${i + 1} Name:`;
@@ -337,8 +346,8 @@
         const div = document.createElement('div');
         div.className = "player-card";
         div.id = `player-${idx}`;
-
         const isJudge = idx === currentJudgeIndex;
+
         div.innerHTML = `
           <div class="judge-badge">${isJudge ? "🎤 Judge" : ""}</div>
           <div class="player-name">${player}</div>
