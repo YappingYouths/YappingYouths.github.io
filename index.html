@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <title>Yapping Youths</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes" />
   <style>
     :root {
       --discord-blurple: #5865F2;
@@ -41,9 +41,10 @@
       border: 2px solid var(--discord-blurple);
       border-radius: 8px;
       padding: 2em;
-      margin: 3em;
+      margin: 3em auto;
       max-width: 400px;
       text-align: center;
+      width: 90%;
     }
 
     .player-count-group,
@@ -55,8 +56,8 @@
 
     #gameScreen {
       display: none;
-      width: 90%;
-      max-width: 900px;
+      width: 95%;
+      max-width: 1000px;
       margin-top: 2em;
     }
 
@@ -235,6 +236,41 @@
       header {
         font-size: 1.2em;
         padding: 0.8em;
+      }
+    }
+
+    @media screen and (orientation: portrait) {
+      #cardsArea {
+        flex-direction: column;
+        align-items: center;
+        gap: 2em;
+      }
+
+      .players {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .player-card {
+        max-width: 95%;
+      }
+
+      #splashScreen {
+        margin: 1em;
+        width: 95%;
+      }
+    }
+
+    @media screen and (orientation: landscape) {
+      #cardsArea {
+        flex-direction: row;
+        justify-content: space-around;
+      }
+
+      .players {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
       }
     }
   </style>
