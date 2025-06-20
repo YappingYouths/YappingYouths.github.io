@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -109,6 +108,7 @@
       max-width: 220px;
       text-align: center;
       box-shadow: 0 0 5px rgba(88, 101, 242, 0.6);
+      position: relative;
     }
 
     .player-name {
@@ -123,6 +123,15 @@
       font-size: 1em;
       margin-bottom: 0.4em;
       height: 1.4em;
+    }
+
+    .judge-badge {
+      color: var(--discord-blurple);
+      font-weight: bold;
+      position: absolute;
+      top: 8px;
+      right: 10px;
+      font-size: 0.9em;
     }
 
     .score {
@@ -160,6 +169,7 @@
       display: flex;
       justify-content: center;
       gap: 3em;
+      flex-wrap: wrap;
     }
 
     .card-display {
@@ -203,17 +213,12 @@
       user-select: none;
     }
 
+    #nextRoundBtn {
+      display: block;
+      margin: 1em auto 2em;
+    }
+
     @media (max-width: 600px) {
-      #splashScreen {
-        margin: 1.5em;
-        max-width: 320px;
-      }
-
-      button, input[type="number"], input[type="text"] {
-        font-size: 1.1em;
-        padding: 0.7em;
-      }
-
       .card-display {
         width: 160px;
         height: 210px;
@@ -256,6 +261,8 @@
       <div id="greenCard" class="card-display card-green">Click to draw Green Card</div>
     </div>
 
+    <button id="nextRoundBtn">Next Round</button>
+
     <div id="rules">
       <strong>Rules:</strong> Draw a black card and a green card. Players must answer the black card with an explanation, and must adhere to the rule of the green card. The judge then picks the best explanation and they receive a point. First to 4 points wins.
     </div>
@@ -264,10 +271,13 @@
   <script>
     const deckA = Array.from({ length: 100 }, (_, i) => `a${i + 1}`);
     const deckB = Array.from({ length: 50 }, (_, i) => `b${i + 1}`);
-
     const maxPoints = 4;
+
     let players = [];
     let scores = [];
+    let currentJudgeIndex = 0;
+    let currentDeckA = [];
+    let currentDeckB = [];
 
     const splashScreen = document.getElementById('splashScreen');
     const gameScreen = document.getElementById('gameScreen');
@@ -277,15 +287,11 @@
     const playersContainer = document.getElementById('playersContainer');
     const blackCardDiv = document.getElementById('blackCard');
     const greenCardDiv = document.getElementById('greenCard');
-
-    let currentDeckA = [];
-    let currentDeckB = [];
+    const nextRoundBtn = document.getElementById('nextRoundBtn');
 
     function createPlayerNameInputs() {
       playerNamesInputs.innerHTML = "";
-      let count = Number(playerCountInput.value);
-      if (count < 3) count = 3;
-      if (count > 12) count = 12;
+      let count = Math.max(3, Math.min(12, Number(playerCountInput.value)));
       playerCountInput.value = count;
       for (let i = 0; i < count; i++) {
         const label = document.createElement('label');
@@ -304,29 +310,25 @@
 
     startGameBtn.addEventListener('click', () => {
       const count = Number(playerCountInput.value);
-      if (count < 3) {
-        alert('Minimum players is 3');
-        return;
-      }
+      if (count < 3) return alert('Minimum players is 3');
 
       players = [];
       for (let i = 0; i < count; i++) {
         const input = document.getElementById(`playerName${i}`);
         const name = input.value.trim();
-        if (!name) {
-          alert(`Please enter a name for Player ${i + 1}`);
-          return;
-        }
+        if (!name) return alert(`Please enter a name for Player ${i + 1}`);
         players.push(name);
       }
 
-      scores = new Array(players.length).fill(0);
-      splashScreen.style.display = "none";
-      gameScreen.style.display = "block";
-      renderPlayers();
-      resetCards();
+      scores = Array(players.length).fill(0);
       currentDeckA = [...deckA];
       currentDeckB = [...deckB];
+      currentJudgeIndex = Math.floor(Math.random() * players.length);
+
+      splashScreen.style.display = "none";
+      gameScreen.style.display = "block";
+      resetCards();
+      renderPlayers();
     });
 
     function renderPlayers() {
@@ -336,7 +338,9 @@
         div.className = "player-card";
         div.id = `player-${idx}`;
 
+        const isJudge = idx === currentJudgeIndex;
         div.innerHTML = `
+          <div class="judge-badge">${isJudge ? "🎤 Judge" : ""}</div>
           <div class="player-name">${player}</div>
           <div class="winner-tag" id="winner-${idx}"></div>
           <div class="score" id="score-${idx}">${scores[idx]}</div>
@@ -351,6 +355,7 @@
     }
 
     window.adjustScore = function(idx, delta) {
+      if (idx === currentJudgeIndex && delta > 0) return alert("Judges can't score during their round!");
       scores[idx] = Math.max(0, scores[idx] + delta);
       document.getElementById(`score-${idx}`).textContent = scores[idx];
       checkWinner();
@@ -381,17 +386,19 @@
     blackCardDiv.addEventListener('click', () => {
       if (currentDeckA.length === 0) currentDeckA = [...deckA];
       const card = drawCard(currentDeckA);
-      blackCardDiv.innerHTML = card
-        ? `<img src="deck_a/${card}.png" alt="${card}" />`
-        : "No more cards in Deck A";
+      blackCardDiv.innerHTML = card ? `<img src="deck_a/${card}.png" alt="${card}" />` : "No more cards in Deck A";
     });
 
     greenCardDiv.addEventListener('click', () => {
       if (currentDeckB.length === 0) currentDeckB = [...deckB];
       const card = drawCard(currentDeckB);
-      greenCardDiv.innerHTML = card
-        ? `<img src="deck_b/${card}.png" alt="${card}" />`
-        : "No more cards in Deck B";
+      greenCardDiv.innerHTML = card ? `<img src="deck_b/${card}.png" alt="${card}" />` : "No more cards in Deck B";
+    });
+
+    nextRoundBtn.addEventListener('click', () => {
+      currentJudgeIndex = (currentJudgeIndex + 1) % players.length;
+      renderPlayers();
+      resetCards();
     });
   </script>
 </body>
