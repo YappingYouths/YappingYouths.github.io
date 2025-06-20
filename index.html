@@ -140,8 +140,7 @@ button.score.minus { background: #ff9800; color: white; }
     <div id="player-inputs"></div>
     <button onclick="addPlayerInput()">+ Add Player</button>
     <button onclick="startGame()">Start Game</button>
-  </div>  <div id="game-area" style="display:none;">
-    <div id="judge-display" class="judge-display" style="display:none;"></div><div class="deck-wrapper">
+  </div>  <div id="game-area" style="display:none;"><div class="deck-wrapper">
   <div class="deck-container">
     <h2>Black Deck</h2>
     <div id="cardA" class="card">Deck A ready</div>
@@ -154,9 +153,10 @@ button.score.minus { background: #ff9800; color: white; }
     <button class="draw" onclick="drawCard('B')">Draw</button>
     <button class="reset" onclick="resetDeck('B')">Reset</button>
   </div>
-<button onclick="nextJudge()" class="draw">Next Judge</button>
-
-$1> <h2>Scoreboard</h2> <div id="scoreboard"></div> </div>
+$1>
+  <h2>Scoreboard</h2>
+  <div id="scoreboard"></div>
+</div>
 
 <div class="rules-box">
   <h2>Game Rules</h2>
@@ -212,8 +212,7 @@ $1> <h2>Scoreboard</h2> <div id="scoreboard"></div> </div>
       // rotate judge after both decks are drawn
       if (deckId === 'B') {
         currentJudgeIndex = (currentJudgeIndex + 1) % players.length;
-        updateJudgeDisplay();
-      }
+              }
     };
 
     const resetDeck = (deckId) => {
@@ -310,17 +309,7 @@ $1> <h2>Scoreboard</h2> <div id="scoreboard"></div> </div>
       });
     }
 
-    function updateJudgeDisplay() {
-  const judgeName = players[currentJudgeIndex]?.name || "";
-  document.getElementById("judge-display").textContent = `Current Judge: ${judgeName}`;
-}
-
-function nextJudge() {
-  currentJudgeIndex = (currentJudgeIndex + 1) % players.length;
-  updateJudgeDisplay();
-}`;
-    }
-
+    
     async function init() {
       document.getElementById("cardA").innerText = "Loading Black Deck...";
       document.getElementById("cardB").innerText = "Loading Green Deck...";
