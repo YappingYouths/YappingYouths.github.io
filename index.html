@@ -14,6 +14,7 @@
       --discord-black: #000000;
       --discord-grey: #99AAB5;
     }
+
     body {
       background-color: var(--discord-darker);
       color: var(--discord-light);
@@ -26,6 +27,7 @@
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
     }
+
     header {
       background-color: var(--discord-blurple);
       width: 100%;
@@ -35,6 +37,7 @@
       text-align: center;
       box-shadow: 0 2px 6px rgba(0,0,0,0.5);
     }
+
     #splashScreen {
       background-color: var(--discord-dark);
       border: 2px solid var(--discord-blurple);
@@ -44,18 +47,26 @@
       max-width: 400px;
       text-align: center;
     }
+
+    #playerNamesInputs {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
     #gameScreen {
       display: none;
       width: 90%;
       max-width: 900px;
       margin-top: 2em;
-      transition: transform 0.3s ease;
     }
+
     label {
       display: block;
       margin-top: 1em;
       font-weight: bold;
     }
+
     input[type="number"],
     input[type="text"] {
       width: 100%;
@@ -65,6 +76,7 @@
       margin-top: 0.3em;
       font-size: 1em;
     }
+
     button {
       margin-top: 1.5em;
       background-color: var(--discord-blurple);
@@ -77,9 +89,11 @@
       font-size: 1.1em;
       transition: background-color 0.3s ease;
     }
+
     button:hover {
       background-color: #4752c4;
     }
+
     .players {
       display: flex;
       flex-wrap: wrap;
@@ -87,6 +101,7 @@
       gap: 1.5em;
       margin-bottom: 2em;
     }
+
     .player-card {
       background-color: var(--discord-dark);
       border-radius: 8px;
@@ -95,19 +110,21 @@
       max-width: 220px;
       text-align: center;
       box-shadow: 0 0 5px rgba(88, 101, 242, 0.6);
-      position: relative;
     }
+
     .player-name {
       font-weight: bold;
       font-size: 1.2em;
       margin-bottom: 0.6em;
     }
+
     .score {
       font-size: 2.5em;
       margin: 0.3em 0;
       font-weight: bold;
       color: var(--discord-green);
     }
+
     .score-controls button {
       background-color: var(--discord-blurple);
       margin: 0 0.5em;
@@ -115,9 +132,11 @@
       padding: 0.2em 0.6em;
       border-radius: 6px;
     }
+
     .score-controls button:hover {
       background-color: #4752c4;
     }
+
     #winnerMessage {
       text-align: center;
       font-size: 1.8em;
@@ -125,6 +144,7 @@
       color: var(--discord-green);
       margin-top: 1em;
     }
+
     #rules {
       margin-top: 3em;
       max-width: 800px;
@@ -135,12 +155,14 @@
       text-align: center;
       font-style: italic;
     }
+
     #cardsArea {
       margin: 2em 0;
       display: flex;
       justify-content: center;
       gap: 3em;
     }
+
     .card-display {
       background-color: var(--discord-dark);
       border: 2px solid var(--discord-grey);
@@ -155,24 +177,25 @@
       user-select: none;
       box-shadow: 0 0 10px var(--discord-grey);
       cursor: pointer;
-      padding: 0;
       text-align: center;
       overflow: hidden;
       position: relative;
     }
+
     .card-black {
       border-color: black;
       background-color: #111;
       color: white;
       box-shadow: 0 0 15px black;
     }
+
     .card-green {
       border-color: var(--discord-green);
       background-color: #003300;
       color: var(--discord-green);
       box-shadow: 0 0 15px var(--discord-green);
     }
-    /* Image fills card but keeps aspect ratio */
+
     .card-display img {
       max-width: 100%;
       max-height: 100%;
@@ -181,30 +204,34 @@
       user-select: none;
     }
 
-    /* MOBILE ZOOM */
     @media (max-width: 600px) {
-      #gameScreen {
-        transform: scale(1.2);
-        transform-origin: top center;
-      }
       #splashScreen {
         margin: 1.5em;
         max-width: 320px;
       }
+
       button, input[type="number"], input[type="text"] {
-        font-size: 1.3em;
-        padding: 1em;
+        font-size: 1.1em;
+        padding: 0.7em;
       }
+
       .card-display {
-        width: 180px;
-        height: 240px;
+        width: 160px;
+        height: 210px;
       }
+
       .players {
         gap: 1em;
       }
+
       .player-card {
         max-width: 160px;
         flex: 1 1 140px;
+      }
+
+      header {
+        font-size: 1.2em;
+        padding: 0.8em;
       }
     }
   </style>
@@ -240,10 +267,7 @@
   </div>
 
   <script>
-    // Generate deckA with a1 to a100
     const deckA = Array.from({length: 100}, (_, i) => `a${i + 1}`);
-
-    // Generate deckB with b1 to b50
     const deckB = Array.from({length: 50}, (_, i) => `b${i + 1}`);
 
     const maxPoints = 4;
@@ -280,6 +304,7 @@
         playerNamesInputs.appendChild(input);
       }
     }
+
     playerCountInput.addEventListener('change', createPlayerNameInputs);
     createPlayerNameInputs();
 
