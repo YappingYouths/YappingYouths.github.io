@@ -53,18 +53,6 @@
       align-items: center;
     }
 
-    #gameScreen {
-      display: none;
-      width: 90%;
-      max-width: 900px;
-      margin-top: 2em;
-    }
-
-    label {
-      margin-top: 1em;
-      font-weight: bold;
-    }
-
     input[type="number"],
     input[type="text"] {
       padding: 0.5em;
@@ -90,153 +78,6 @@
     button:hover {
       background-color: #4752c4;
     }
-
-    .players {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 1.5em;
-      margin-bottom: 2em;
-    }
-
-    .player-card {
-      background-color: var(--discord-dark);
-      border-radius: 8px;
-      padding: 1em 1.5em;
-      flex: 1 1 200px;
-      max-width: 220px;
-      text-align: center;
-      box-shadow: 0 0 5px rgba(88, 101, 242, 0.6);
-      position: relative;
-    }
-
-    .player-name {
-      font-weight: bold;
-      font-size: 1.2em;
-      margin-bottom: 0.2em;
-    }
-
-    .winner-tag {
-      color: var(--discord-green);
-      font-weight: bold;
-      font-size: 1em;
-      margin-bottom: 0.4em;
-      height: 1.4em;
-    }
-
-    .judge-badge {
-      color: var(--discord-blurple);
-      font-weight: bold;
-      position: absolute;
-      top: 8px;
-      right: 10px;
-      font-size: 0.9em;
-    }
-
-    .score {
-      font-size: 2.5em;
-      margin: 0.3em 0;
-      font-weight: bold;
-      color: var(--discord-green);
-    }
-
-    .score-controls button {
-      background-color: var(--discord-blurple);
-      margin: 0 0.5em;
-      font-size: 1.3em;
-      padding: 0.2em 0.6em;
-      border-radius: 6px;
-    }
-
-    .score-controls button:hover {
-      background-color: #4752c4;
-    }
-
-    #rules {
-      margin-top: 3em;
-      max-width: 800px;
-      font-size: 1.1em;
-      color: var(--discord-grey);
-      padding: 1em;
-      border-top: 2px solid var(--discord-blurple);
-      text-align: center;
-      font-style: italic;
-    }
-
-    #cardsArea {
-      margin: 2em 0;
-      display: flex;
-      justify-content: center;
-      gap: 3em;
-      flex-wrap: wrap;
-    }
-
-    .card-display {
-      background-color: var(--discord-dark);
-      border: 2px solid var(--discord-grey);
-      border-radius: 12px;
-      width: 150px;
-      height: 200px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 1.8em;
-      color: var(--discord-light);
-      user-select: none;
-      box-shadow: 0 0 10px var(--discord-grey);
-      cursor: pointer;
-      text-align: center;
-      overflow: hidden;
-      position: relative;
-    }
-
-    .card-black {
-      border-color: black;
-      background-color: #111;
-      color: white;
-      box-shadow: 0 0 15px black;
-    }
-
-    .card-green {
-      border-color: var(--discord-green);
-      background-color: #003300;
-      color: var(--discord-green);
-      box-shadow: 0 0 15px var(--discord-green);
-    }
-
-    .card-display img {
-      max-width: 100%;
-      max-height: 100%;
-      object-fit: contain;
-      pointer-events: none;
-      user-select: none;
-    }
-
-    #nextRoundBtn {
-      display: block;
-      margin: 1em auto 2em;
-    }
-
-    @media (max-width: 600px) {
-      .card-display {
-        width: 160px;
-        height: 210px;
-      }
-
-      .players {
-        gap: 1em;
-      }
-
-      .player-card {
-        max-width: 160px;
-        flex: 1 1 140px;
-      }
-
-      header {
-        font-size: 1.2em;
-        padding: 0.8em;
-      }
-    }
   </style>
 </head>
 <body>
@@ -246,7 +87,7 @@
     <h2>Enter Player Info</h2>
     <div class="player-count-group">
       <label>Number of Players (3-12):</label>
-      <div style="display: flex; gap: 1em; align-items: center; margin-top: 0.5em;">
+      <div style="display: flex; gap: 1em; align-items: center; justify-content: center; margin-top: 0.5em;">
         <button type="button" onclick="changePlayerCount(-1)">–</button>
         <input type="number" id="playerCount" min="3" max="12" value="3" readonly style="text-align: center; width: 50px;" />
         <button type="button" onclick="changePlayerCount(1)">+</button>
@@ -255,18 +96,17 @@
     <div id="playerNamesInputs"></div>
     <button id="startGameBtn">Start Game</button>
   </div>
-
-  <div id="gameScreen">
+<div id="gameScreen" style="display:none;">
     <div class="players" id="playersContainer"></div>
 
-    <div id="cardsArea">
+    <div id="cardsArea" style="display:flex; justify-content:center; gap:3em; flex-wrap:wrap; margin: 2em 0;">
       <div id="blackCard" class="card-display card-black">Click to draw Black Card</div>
       <div id="greenCard" class="card-display card-green">Click to draw Green Card</div>
     </div>
 
     <button id="nextRoundBtn">Next Round</button>
 
-    <div id="rules">
+    <div id="rules" style="margin-top:3em; max-width:800px; font-size:1.1em; color:var(--discord-grey); padding:1em; border-top:2px solid var(--discord-blurple); text-align:center; font-style: italic;">
       <strong>Rules:</strong> Draw a black card and a green card. Players must answer the black card with an explanation, and must adhere to the rule of the green card. The judge then picks the best explanation and they receive a point. First to 4 points wins.
     </div>
   </div>
@@ -282,11 +122,11 @@
     let currentDeckA = [];
     let currentDeckB = [];
 
-    const splashScreen = document.getElementById('splashScreen');
-    const gameScreen = document.getElementById('gameScreen');
     const playerCountInput = document.getElementById('playerCount');
     const playerNamesInputs = document.getElementById('playerNamesInputs');
     const startGameBtn = document.getElementById('startGameBtn');
+    const splashScreen = document.getElementById('splashScreen');
+    const gameScreen = document.getElementById('gameScreen');
     const playersContainer = document.getElementById('playersContainer');
     const blackCardDiv = document.getElementById('blackCard');
     const greenCardDiv = document.getElementById('greenCard');
@@ -314,7 +154,6 @@
       }
     }
 
-    playerCountInput.addEventListener('change', createPlayerNameInputs);
     createPlayerNameInputs();
 
     startGameBtn.addEventListener('click', () => {
@@ -346,8 +185,8 @@
         const div = document.createElement('div');
         div.className = "player-card";
         div.id = `player-${idx}`;
-        const isJudge = idx === currentJudgeIndex;
 
+        const isJudge = idx === currentJudgeIndex;
         div.innerHTML = `
           <div class="judge-badge">${isJudge ? "🎤 Judge" : ""}</div>
           <div class="player-name">${player}</div>
