@@ -1,450 +1,149 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Yapping Youths</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Discord-Themed Card Game</title>
   <style>
     :root {
       --discord-blurple: #5865F2;
       --discord-dark: #2C2F33;
-      --discord-darker: #23272A;
-      --discord-light: #FFFFFF;
-      --discord-green: #57F287;
-      --discord-black: #000000;
-      --discord-grey: #99AAB5;
-    }
+      --discord-gray: #99AAB5;
+    }* {
+  box-sizing: border-box;
+}
 
-    body {
-      background-color: var(--discord-darker);
-      color: var(--discord-light);
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      margin: 0;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
+body {
+  margin: 0;
+  font-family: sans-serif;
+  background-color: var(--discord-dark);
+  color: white;
+  text-align: center;
+  padding: 1em;
+}
 
-    header {
-      background-color: var(--discord-blurple);
-      width: 100%;
-      padding: 1em;
-      font-size: 1.5em;
-      font-weight: bold;
-      text-align: center;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.5);
-    }
+.splash, .game {
+  display: none;
+}
 
-    #splashScreen {
-      background-color: var(--discord-dark);
-      border: 2px solid var(--discord-blurple);
-      border-radius: 8px;
-      padding: 2em;
-      margin: 3em auto;
-      max-width: 400px;
-      text-align: center;
-      width: 90%;
-    }
+.active {
+  display: block;
+}
 
-    .player-count-group,
-    #playerNamesInputs {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
+input, button {
+  padding: 0.5em;
+  margin: 0.5em;
+  border: none;
+  border-radius: 0.5em;
+  font-size: 1em;
+}
 
-    #gameScreen {
-      display: none;
-      width: 95%;
-      max-width: 1000px;
-      margin-top: 2em;
-    }
+input {
+  width: 70%;
+}
 
-    label {
-      margin-top: 1em;
-      font-weight: bold;
-    }
+button {
+  background-color: var(--discord-blurple);
+  color: white;
+  cursor: pointer;
+}
 
-    input[type="number"],
-    input[type="text"] {
-      padding: 0.5em;
-      border-radius: 4px;
-      border: none;
-      margin-top: 0.3em;
-      font-size: 1em;
-    }
+.player {
+  margin: 1em 0;
+}
 
-    button {
-      margin-top: 1em;
-      background-color: var(--discord-blurple);
-      color: var(--discord-light);
-      border: none;
-      padding: 0.5em 1em;
-      font-weight: bold;
-      cursor: pointer;
-      border-radius: 6px;
-      font-size: 1em;
-      transition: background-color 0.3s ease;
-    }
+.winner {
+  font-size: 1.2em;
+  color: lime;
+  margin-top: 1em;
+}
 
-    button:hover {
-      background-color: #4752c4;
-    }
+.rules {
+  font-size: 0.9em;
+  color: var(--discord-gray);
+  margin-top: 2em;
+  border-top: 1px solid var(--discord-gray);
+  padding-top: 1em;
+}
 
-    .players {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 1.5em;
-      margin-bottom: 2em;
-    }
-
-    .player-card {
-      background-color: var(--discord-dark);
-      border-radius: 8px;
-      padding: 1em 1.5em;
-      flex: 1 1 200px;
-      max-width: 220px;
-      text-align: center;
-      box-shadow: 0 0 5px rgba(88, 101, 242, 0.6);
-      position: relative;
-    }
-
-    .player-name {
-      font-weight: bold;
-      font-size: 1.2em;
-      margin-bottom: 0.2em;
-    }
-
-    .winner-tag {
-      color: var(--discord-green);
-      font-weight: bold;
-      font-size: 1em;
-      margin-bottom: 0.4em;
-      height: 1.4em;
-    }
-
-    .judge-badge {
-      color: var(--discord-blurple);
-      font-weight: bold;
-      position: absolute;
-      top: 8px;
-      right: 10px;
-      font-size: 0.9em;
-    }
-
-    .score {
-      font-size: 2.5em;
-      margin: 0.3em 0;
-      font-weight: bold;
-      color: var(--discord-green);
-    }
-
-    .score-controls button {
-      background-color: var(--discord-blurple);
-      margin: 0 0.5em;
-      font-size: 1.3em;
-      padding: 0.2em 0.6em;
-      border-radius: 6px;
-    }
-
-    .score-controls button:hover {
-      background-color: #4752c4;
-    }
-
-    #rules {
-      margin-top: 3em;
-      max-width: 800px;
-      font-size: 1.1em;
-      color: var(--discord-grey);
-      padding: 1em;
-      border-top: 2px solid var(--discord-blurple);
-      text-align: center;
-      font-style: italic;
-    }
-
-    #cardsArea {
-      margin: 2em 0;
-      display: flex;
-      justify-content: center;
-      gap: 3em;
-      flex-wrap: wrap;
-    }
-
-    .card-display {
-      background-color: var(--discord-dark);
-      border: 2px solid var(--discord-grey);
-      border-radius: 12px;
-      width: 150px;
-      height: 200px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 1.8em;
-      color: var(--discord-light);
-      user-select: none;
-      box-shadow: 0 0 10px var(--discord-grey);
-      cursor: pointer;
-      text-align: center;
-      overflow: hidden;
-      position: relative;
-    }
-
-    .card-black {
-      border-color: black;
-      background-color: #111;
-      color: white;
-      box-shadow: 0 0 15px black;
-    }
-
-    .card-green {
-      border-color: var(--discord-green);
-      background-color: #003300;
-      color: var(--discord-green);
-      box-shadow: 0 0 15px var(--discord-green);
-    }
-
-    .card-display img {
-      max-width: 100%;
-      max-height: 100%;
-      object-fit: contain;
-      pointer-events: none;
-      user-select: none;
-    }
-
-    #nextRoundBtn {
-      display: block;
-      margin: 1em auto 2em;
-    }
-
-    @media (max-width: 600px) {
-      .card-display {
-        width: 160px;
-        height: 210px;
-      }
-
-      .players {
-        gap: 1em;
-      }
-
-      .player-card {
-        max-width: 160px;
-        flex: 1 1 140px;
-      }
-
-      header {
-        font-size: 1.2em;
-        padding: 0.8em;
-      }
-    }
-
-    @media screen and (orientation: portrait) {
-      #cardsArea {
-        flex-direction: column;
-        align-items: center;
-        gap: 2em;
-      }
-
-      .players {
-        flex-direction: column;
-        align-items: center;
-      }
-
-      .player-card {
-        max-width: 95%;
-      }
-
-      #splashScreen {
-        margin: 1em;
-        width: 95%;
-      }
-    }
-
-    @media screen and (orientation: landscape) {
-      #cardsArea {
-        flex-direction: row;
-        justify-content: space-around;
-      }
-
-      .players {
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: center;
-      }
-    }
   </style>
 </head>
 <body>
-  <header>Yapping Youths</header>
-
-  <div id="splashScreen">
-    <h2>Enter Player Info</h2>
-    <div class="player-count-group">
-      <label>Number of Players (3-12):</label>
-      <div style="display: flex; gap: 1em; align-items: center; margin-top: 0.5em;">
-        <button type="button" onclick="changePlayerCount(-1)">–</button>
-        <input type="number" id="playerCount" min="3" max="12" value="3" readonly style="text-align: center; width: 50px;" />
-        <button type="button" onclick="changePlayerCount(1)">+</button>
-      </div>
+  <div class="splash active" id="splash">
+    <h1>Enter Players</h1>
+    <input type="number" id="playerCount" placeholder="Number of Players" min="1" max="12" /><br />
+    <div id="playerNames"></div>
+    <button onclick="startGame()">Start Game</button>
+  </div>  <div class="game" id="game">
+    <h2>Card Game</h2>
+    <div>
+      <button onclick="drawCard('a')">Draw Black Card</button>
+      <span id="blackCard"></span>
     </div>
-    <div id="playerNamesInputs"></div>
-    <button id="startGameBtn">Start Game</button>
-  </div>
+    <div>
+      <button onclick="drawCard('b')">Draw Green Card</button>
+      <span id="greenCard"></span>
+    </div><div id="players"></div>
+<div class="winner" id="winnerMsg"></div>
 
-  <div id="gameScreen">
-    <div class="players" id="playersContainer"></div>
+<div class="rules">
+  <strong>Rules:</strong><br>
+  Draw a black card and a green card. Players must answer the black card with an explanation, and must adhere to the rule of the green card. The judge then picks the best explanation and they receive a point. First to 4 points wins.
+</div>
 
-    <div id="cardsArea">
-      <div id="blackCard" class="card-display card-black">Click to draw Black Card</div>
-      <div id="greenCard" class="card-display card-green">Click to draw Green Card</div>
-    </div>
-
-    <button id="nextRoundBtn">Next Round</button>
-
-    <div id="rules">
-      <strong>Rules:</strong> Draw a black card and a green card. Players must answer the black card with an explanation, and must adhere to the rule of the green card. The judge then picks the best explanation and they receive a point. First to 4 points wins.
-    </div>
-  </div>
-
-  <script>
-    const deckA = Array.from({ length: 100 }, (_, i) => `a${i + 1}`);
-    const deckB = Array.from({ length: 50 }, (_, i) => `b${i + 1}`);
+  </div>  <script>
+    let players = [];
     const maxPoints = 4;
 
-    let players = [];
-    let scores = [];
-    let currentJudgeIndex = 0;
-    let currentDeckA = [];
-    let currentDeckB = [];
-
-    const splashScreen = document.getElementById('splashScreen');
-    const gameScreen = document.getElementById('gameScreen');
-    const playerCountInput = document.getElementById('playerCount');
-    const playerNamesInputs = document.getElementById('playerNamesInputs');
-    const startGameBtn = document.getElementById('startGameBtn');
-    const playersContainer = document.getElementById('playersContainer');
-    const blackCardDiv = document.getElementById('blackCard');
-    const greenCardDiv = document.getElementById('greenCard');
-    const nextRoundBtn = document.getElementById('nextRoundBtn');
-
-    function changePlayerCount(delta) {
-      let count = Number(playerCountInput.value);
-      count = Math.max(3, Math.min(12, count + delta));
-      playerCountInput.value = count;
-      createPlayerNameInputs();
-    }
-
-    function createPlayerNameInputs() {
-      playerNamesInputs.innerHTML = "";
-      let count = Number(playerCountInput.value);
-      for (let i = 0; i < count; i++) {
-        const label = document.createElement('label');
-        label.textContent = `Player ${i + 1} Name:`;
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.placeholder = `Player ${i + 1}`;
-        input.id = `playerName${i}`;
-        playerNamesInputs.appendChild(label);
-        playerNamesInputs.appendChild(input);
-      }
-    }
-
-    playerCountInput.addEventListener('change', createPlayerNameInputs);
-    createPlayerNameInputs();
-
-    startGameBtn.addEventListener('click', () => {
-      const count = Number(playerCountInput.value);
-      if (count < 3) return alert('Minimum players is 3');
-
+    function startGame() {
+      const count = parseInt(document.getElementById('playerCount').value);
+      const names = document.querySelectorAll('.nameInput');
       players = [];
-      for (let i = 0; i < count; i++) {
-        const input = document.getElementById(`playerName${i}`);
-        const name = input.value.trim();
-        if (!name) return alert(`Please enter a name for Player ${i + 1}`);
-        players.push(name);
-      }
-
-      scores = Array(players.length).fill(0);
-      currentDeckA = [...deckA];
-      currentDeckB = [...deckB];
-      currentJudgeIndex = Math.floor(Math.random() * players.length);
-
-      splashScreen.style.display = "none";
-      gameScreen.style.display = "block";
-      resetCards();
+      names.forEach((input, i) => {
+        players.push({ name: input.value, points: 0 });
+      });
       renderPlayers();
+      document.getElementById('splash').classList.remove('active');
+      document.getElementById('game').classList.add('active');
+    }
+
+    document.getElementById('playerCount').addEventListener('input', function () {
+      const count = parseInt(this.value);
+      const container = document.getElementById('playerNames');
+      container.innerHTML = '';
+      for (let i = 0; i < count; i++) {
+        container.innerHTML += `<input class='nameInput' placeholder='Player ${i + 1} Name'><br />`;
+      }
     });
 
     function renderPlayers() {
-      playersContainer.innerHTML = "";
-      players.forEach((player, idx) => {
-        const div = document.createElement('div');
-        div.className = "player-card";
-        div.id = `player-${idx}`;
-        const isJudge = idx === currentJudgeIndex;
-
-        div.innerHTML = `
-          <div class="judge-badge">${isJudge ? "🎤 Judge" : ""}</div>
-          <div class="player-name">${player}</div>
-          <div class="winner-tag" id="winner-${idx}"></div>
-          <div class="score" id="score-${idx}">${scores[idx]}</div>
-          <div class="score-controls">
-            <button onclick="adjustScore(${idx}, -1)">–</button>
-            <button onclick="adjustScore(${idx}, 1)">+</button>
+      const container = document.getElementById('players');
+      container.innerHTML = '';
+      players.forEach((player, index) => {
+        container.innerHTML += `
+          <div class="player">
+            ${player.name}: ${player.points} points
+            <button onclick="changePoints(${index}, 1)">+</button>
+            <button onclick="changePoints(${index}, -1)">-</button>
           </div>
         `;
-
-        playersContainer.appendChild(div);
       });
     }
 
-    window.adjustScore = function(idx, delta) {
-      if (idx === currentJudgeIndex && delta > 0) return alert("Judges can't score during their round!");
-      scores[idx] = Math.max(0, scores[idx] + delta);
-      document.getElementById(`score-${idx}`).textContent = scores[idx];
-      checkWinner();
-    };
-
-    function checkWinner() {
-      players.forEach((_, idx) => {
-        document.getElementById(`winner-${idx}`).textContent = "";
-      });
-
-      const winnerIndex = scores.findIndex(score => score >= maxPoints);
-      if (winnerIndex !== -1) {
-        document.getElementById(`winner-${winnerIndex}`).textContent = "🏆 Winner!";
+    function changePoints(index, delta) {
+      players[index].points += delta;
+      if (players[index].points < 0) players[index].points = 0;
+      if (players[index].points >= maxPoints) {
+        document.getElementById('winnerMsg').innerText = `${players[index].name} is the winner!`;
       }
-    }
-
-    function resetCards() {
-      blackCardDiv.innerHTML = "Click to draw Black Card";
-      greenCardDiv.innerHTML = "Click to draw Green Card";
+      renderPlayers();
     }
 
     function drawCard(deck) {
-      if (deck.length === 0) return null;
-      const i = Math.floor(Math.random() * deck.length);
-      return deck.splice(i, 1)[0];
+      const folder = deck === 'a' ? 'deck_a' : 'deck_b';
+      const cardElement = document.getElementById(deck === 'a' ? 'blackCard' : 'greenCard');
+      // For demo purposes we'll simulate with random numbers
+      const cardNumber = Math.floor(Math.random() * 10) + 1; // Adjust if you have a specific number
+      cardElement.innerText = `${folder}/card${cardNumber}`;
     }
-
-    blackCardDiv.addEventListener('click', () => {
-      if (currentDeckA.length === 0) currentDeckA = [...deckA];
-      const card = drawCard(currentDeckA);
-      blackCardDiv.innerHTML = card ? `<img src="deck_a/${card}.png" alt="${card}" />` : "No more cards in Deck A";
-    });
-
-    greenCardDiv.addEventListener('click', () => {
-      if (currentDeckB.length === 0) currentDeckB = [...deckB];
-      const card = drawCard(currentDeckB);
-      greenCardDiv.innerHTML = card ? `<img src="deck_b/${card}.png" alt="${card}" />` : "No more cards in Deck B";
-    });
-
-    nextRoundBtn.addEventListener('click', () => {
-      currentJudgeIndex = (currentJudgeIndex + 1) % players.length;
-      renderPlayers();
-      resetCards();
-    });
-  </script>
-</body>
+  </script></body>
 </html>
