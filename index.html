@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.2">
@@ -11,168 +10,168 @@
       color: #ffffff;
       text-align: center;
       padding: 2em;
-    }
+    }.deck-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 40px;
+}
 
-    .deck-wrapper {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 20px;
-      margin-bottom: 40px;
-    }
+.deck-container {
+  background: #36393f;
+  padding: 20px;
+  border-radius: 10px;
+  width: 300px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
 
-    .deck-container {
-      background: #36393f;
-      padding: 20px;
-      border-radius: 10px;
-      width: 300px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-    }
+.card {
+  margin: 10px 0;
+  border-radius: 10px;
+  background: #202225;
+  display: inline-block;
+  padding: 10px;
+}
 
-    .card {
-      margin: 10px 0;
-      border-radius: 10px;
-      background: #202225;
-      display: inline-block;
-      padding: 10px;
-    }
+.card img {
+  max-width: 100%;
+  max-height: 400px;
+  width: auto;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+  border-radius: 10px;
+}
 
-    .card img {
-      max-width: 100%;
-      max-height: 400px;
-      width: auto;
-      height: auto;
-      display: block;
-      margin: 0 auto;
-      border-radius: 10px;
-    }
+button {
+  padding: 10px 20px;
+  margin: 5px;
+  border-radius: 8px;
+  font-size: 1em;
+  border: none;
+  cursor: pointer;
+}
 
-    button {
-      padding: 10px 20px;
-      margin: 5px;
-      border-radius: 8px;
-      font-size: 1em;
-      border: none;
-      cursor: pointer;
-    }
+button.draw { background: #5865f2; color: white; }
+button.reset { background: #ed4245; color: white; }
+button.score { background: #4caf50; color: white; }
+button.score.minus { background: #ff9800; color: white; }
 
-    button.draw { background: #5865f2; color: white; }
-    button.reset { background: #ed4245; color: white; }
-    button.score { background: #4caf50; color: white; }
-    button.score.minus { background: #ff9800; color: white; }
+.rules-box {
+  background-color: #36393f;
+  color: #ffffff;
+  padding: 20px;
+  margin-top: 40px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  text-align: left;
+  font-size: 1em;
+  line-height: 1.6;
+}
 
-    .rules-box {
-      background-color: #36393f;
-      color: #ffffff;
-      padding: 20px;
-      margin-top: 40px;
-      border-radius: 10px;
-      width: 90%;
-      max-width: 600px;
-      margin-left: auto;
-      margin-right: auto;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-      text-align: left;
-      font-size: 1em;
-      line-height: 1.6;
-    }
+.scoreboard {
+  background: #36393f;
+  border-radius: 10px;
+  padding: 20px;
+  max-width: 600px;
+  margin: 0 auto 40px auto;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
 
-    .scoreboard {
-      background: #36393f;
-      border-radius: 10px;
-      padding: 20px;
-      max-width: 600px;
-      margin: 0 auto 40px auto;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-    }
+.scoreboard h2 {
+  margin-top: 0;
+}
 
-    .scoreboard h2 {
-      margin-top: 0;
-    }
+.player-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
 
-    .player-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-    }
+.player-name-score {
+  flex-grow: 1;
+  text-align: left;
+  font-weight: bold;
+}
 
-    .player-name-score {
-      flex-grow: 1;
-      text-align: left;
-      font-weight: bold;
-    }
+.score-buttons {
+  display: flex;
+  gap: 5px;
+}
 
-    .score-buttons {
-      display: flex;
-      gap: 5px;
-    }
+#player-setup input {
+  display: block;
+  margin: 10px auto;
+  padding: 8px;
+  border-radius: 6px;
+  border: none;
+  width: 80%;
+  max-width: 300px;
+}
 
-    #player-setup input {
-      display: block;
-      margin: 10px auto;
-      padding: 8px;
-      border-radius: 6px;
-      border: none;
-      width: 80%;
-      max-width: 300px;
-    }
+#player-setup button {
+  margin-top: 10px;
+}
 
-    #player-setup button {
-      margin-top: 10px;
-    }
+.winner {
+  background-color: #43b581;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-weight: bold;
+}
 
-    .winner {
-      background-color: #43b581;
-      padding: 6px 10px;
-      border-radius: 6px;
-      font-weight: bold;
-    }
+.judge-display {
+  margin-top: 20px;
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
   </style>
 </head>
 <body>
-  <h1>Card Game</h1>
-
-  <div id="player-setup">
+  <h1>Card Game</h1>  <div id="player-setup">
     <h2>Enter Player Names (3–12)</h2>
     <div id="player-inputs"></div>
     <button onclick="addPlayerInput()">+ Add Player</button>
     <button onclick="startGame()">Start Game</button>
+  </div>  <div id="game-area" style="display:none;">
+    <div id="judge-display" class="judge-display"></div><div class="deck-wrapper">
+  <div class="deck-container">
+    <h2>Black Deck</h2>
+    <div id="cardA" class="card">Deck A ready</div>
+    <button class="draw" onclick="drawCard('A')">Draw</button>
+    <button class="reset" onclick="resetDeck('A')">Reset</button>
   </div>
-
-  <div id="game-area" style="display:none;">
-    <div class="deck-wrapper">
-      <div class="deck-container">
-        <h2>Black Deck</h2>
-        <div id="cardA" class="card">Deck A ready</div>
-        <button class="draw" onclick="drawCard('A')">Draw</button>
-        <button class="reset" onclick="resetDeck('A')">Reset</button>
-      </div>
-      <div class="deck-container">
-        <h2>Green Deck</h2>
-        <div id="cardB" class="card">Deck B ready</div>
-        <button class="draw" onclick="drawCard('B')">Draw</button>
-        <button class="reset" onclick="resetDeck('B')">Reset</button>
-      </div>
-    </div>
-
-    <div class="scoreboard">
-      <h2>Scoreboard</h2>
-      <div id="scoreboard"></div>
-    </div>
-
-    <div class="rules-box">
-      <h2>Game Rules</h2>
-      <p>
-        Draw a black card and a green card.<br><br>
-        Players must answer the black card with an explanation, and must follow the rule of the green card.<br><br>
-        The judge picks the best explanation — that player receives a point.<br><br>
-        First to 4 points wins.
-      </p>
-    </div>
+  <div class="deck-container">
+    <h2>Green Deck</h2>
+    <div id="cardB" class="card">Deck B ready</div>
+    <button class="draw" onclick="drawCard('B')">Draw</button>
+    <button class="reset" onclick="resetDeck('B')">Reset</button>
   </div>
+</div>
 
-  <script>
+<div class="scoreboard">
+  <h2>Scoreboard</h2>
+  <div id="scoreboard"></div>
+</div>
+
+<div class="rules-box">
+  <h2>Game Rules</h2>
+  <p>
+    Draw a black card and a green card.<br><br>
+    Players must answer the black card with an explanation, and must follow the rule of the green card.<br><br>
+    The judge picks the best explanation — that player receives a point.<br><br>
+    First to 4 points wins.
+  </p>
+</div>
+
+  </div>  <script>
     const preloadImages = async (folder, prefix, count, ext = "png") => {
       const validImages = [];
       for (let i = 1; i <= count; i++) {
@@ -190,6 +189,7 @@
 
     let deckAImages = [], deckBImages = [];
     let currentDeckA = [], currentDeckB = [];
+    let currentJudgeIndex = 0;
 
     const shuffle = (deck) => {
       for (let i = deck.length - 1; i > 0; i--) {
@@ -209,6 +209,12 @@
 
       const card = deck.pop();
       cardDiv.innerHTML = `<img src="${card}" alt="Card ${deckId}">`;
+
+      // rotate judge after both decks are drawn
+      if (deckId === 'B') {
+        currentJudgeIndex = (currentJudgeIndex + 1) % players.length;
+        updateJudgeDisplay();
+      }
     };
 
     const resetDeck = (deckId) => {
@@ -253,6 +259,7 @@
       document.getElementById("game-area").style.display = "block";
       renderScoreboard();
       init();
+      updateJudgeDisplay();
     }
 
     function renderScoreboard() {
@@ -303,6 +310,11 @@
       });
     }
 
+    function updateJudgeDisplay() {
+      const judgeName = players[currentJudgeIndex]?.name || "";
+      document.getElementById("judge-display").textContent = `Current Judge: ${judgeName}`;
+    }
+
     async function init() {
       document.getElementById("cardA").innerText = "Loading Black Deck...";
       document.getElementById("cardB").innerText = "Loading Green Deck...";
@@ -321,6 +333,5 @@
     }
 
     for (let i = 0; i < 3; i++) addPlayerInput();
-  </script>
-</body>
+  </script></body>
 </html>
