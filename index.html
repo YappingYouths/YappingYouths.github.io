@@ -24,8 +24,6 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
     }
 
     header {
@@ -48,6 +46,7 @@
       text-align: center;
     }
 
+    .player-count-group,
     #playerNamesInputs {
       display: flex;
       flex-direction: column;
@@ -62,7 +61,6 @@
     }
 
     label {
-      display: block;
       margin-top: 1em;
       font-weight: bold;
     }
@@ -241,8 +239,10 @@
 
   <div id="splashScreen">
     <h2>Enter Player Info</h2>
-    <label for="playerCount">Number of Players (3-12):</label>
-    <input type="number" id="playerCount" min="3" max="12" value="3" />
+    <div class="player-count-group">
+      <label for="playerCount">Number of Players (3-12):</label>
+      <input type="number" id="playerCount" min="3" max="12" value="3" />
+    </div>
     <div id="playerNamesInputs"></div>
     <button id="startGameBtn">Start Game</button>
   </div>
@@ -251,12 +251,8 @@
     <div class="players" id="playersContainer"></div>
 
     <div id="cardsArea">
-      <div id="blackCard" class="card-display card-black" title="Black Card - Question/Prompt">
-        Click to draw Black Card
-      </div>
-      <div id="greenCard" class="card-display card-green" title="Green Card - Rule">
-        Click to draw Green Card
-      </div>
+      <div id="blackCard" class="card-display card-black">Click to draw Black Card</div>
+      <div id="greenCard" class="card-display card-green">Click to draw Green Card</div>
     </div>
 
     <div id="winnerMessage"></div>
@@ -267,14 +263,12 @@
   </div>
 
   <script>
-    const deckA = Array.from({length: 100}, (_, i) => `a${i + 1}`);
-    const deckB = Array.from({length: 50}, (_, i) => `b${i + 1}`);
+    const deckA = Array.from({ length: 100 }, (_, i) => `a${i + 1}`);
+    const deckB = Array.from({ length: 50 }, (_, i) => `b${i + 1}`);
 
     const maxPoints = 4;
     let players = [];
     let scores = [];
-    let currentBlackCard = null;
-    let currentGreenCard = null;
 
     const splashScreen = document.getElementById('splashScreen');
     const gameScreen = document.getElementById('gameScreen');
@@ -285,6 +279,9 @@
     const winnerMessage = document.getElementById('winnerMessage');
     const blackCardDiv = document.getElementById('blackCard');
     const greenCardDiv = document.getElementById('greenCard');
+
+    let currentDeckA = [];
+    let currentDeckB = [];
 
     function createPlayerNameInputs() {
       playerNamesInputs.innerHTML = "";
@@ -298,7 +295,6 @@
         const input = document.createElement('input');
         input.type = 'text';
         input.placeholder = `Player ${i + 1}`;
-        input.required = true;
         input.id = `playerName${i}`;
         playerNamesInputs.appendChild(label);
         playerNamesInputs.appendChild(input);
@@ -314,123 +310,91 @@
         alert('Minimum players is 3');
         return;
       }
+
       players = [];
       for (let i = 0; i < count; i++) {
         const input = document.getElementById(`playerName${i}`);
-        if (!input.value.trim()) {
+        const name = input.value.trim();
+        if (!name) {
           alert(`Please enter a name for Player ${i + 1}`);
           return;
         }
-        players.push(input.value.trim());
+        players.push(name);
       }
-      scores = players.map(() => 0);
+
+      scores = new Array(players.length).fill(0);
       splashScreen.style.display = "none";
       gameScreen.style.display = "block";
       winnerMessage.textContent = "";
       renderPlayers();
       resetCards();
-      currentDeckA = deckA.slice();
-      currentDeckB = deckB.slice();
+      currentDeckA = [...deckA];
+      currentDeckB = [...deckB];
     });
 
     function renderPlayers() {
       playersContainer.innerHTML = "";
       players.forEach((player, idx) => {
-        const playerDiv = document.createElement('div');
-        playerDiv.className = "player-card";
-        playerDiv.id = `player-${idx}`;
+        const div = document.createElement('div');
+        div.className = "player-card";
 
-        const nameDiv = document.createElement('div');
-        nameDiv.className = "player-name";
-        nameDiv.textContent = player;
+        div.innerHTML = `
+          <div class="player-name">${player}</div>
+          <div class="score" id="score-${idx}">${scores[idx]}</div>
+          <div class="score-controls">
+            <button onclick="adjustScore(${idx}, -1)">–</button>
+            <button onclick="adjustScore(${idx}, 1)">+</button>
+          </div>
+        `;
 
-        const scoreDiv = document.createElement('div');
-        scoreDiv.className = "score";
-        scoreDiv.textContent = scores[idx];
-
-        const controlsDiv = document.createElement('div');
-        controlsDiv.className = "score-controls";
-
-        const addBtn = document.createElement('button');
-        addBtn.textContent = "+";
-        addBtn.title = `Add point to ${player}`;
-        addBtn.addEventListener('click', () => {
-          if (scores[idx] < maxPoints) {
-            scores[idx]++;
-            scoreDiv.textContent = scores[idx];
-            checkWinner();
-          }
-        });
-
-        const subBtn = document.createElement('button');
-        subBtn.textContent = "–";
-        subBtn.title = `Subtract point from ${player}`;
-        subBtn.addEventListener('click', () => {
-          if (scores[idx] > 0) {
-            scores[idx]--;
-            scoreDiv.textContent = scores[idx];
-            winnerMessage.textContent = "";
-          }
-        });
-
-        controlsDiv.appendChild(subBtn);
-        controlsDiv.appendChild(addBtn);
-
-        playerDiv.appendChild(nameDiv);
-        playerDiv.appendChild(scoreDiv);
-        playerDiv.appendChild(controlsDiv);
-
-        playersContainer.appendChild(playerDiv);
+        playersContainer.appendChild(div);
       });
     }
 
+    window.adjustScore = function(idx, delta) {
+      scores[idx] = Math.max(0, scores[idx] + delta);
+      document.getElementById(`score-${idx}`).textContent = scores[idx];
+      checkWinner();
+    };
+
     function checkWinner() {
-      for (let i = 0; i < scores.length; i++) {
-        if (scores[i] >= maxPoints) {
-          winnerMessage.textContent = `${players[i]} is the winner! 🎉`;
-          break;
-        }
+      const winnerIndex = scores.findIndex(score => score >= maxPoints);
+      if (winnerIndex !== -1) {
+        winnerMessage.textContent = `${players[winnerIndex]} is the winner! 🎉`;
+      } else {
+        winnerMessage.textContent = "";
       }
     }
 
     function resetCards() {
-      currentBlackCard = null;
-      currentGreenCard = null;
       blackCardDiv.innerHTML = "Click to draw Black Card";
       greenCardDiv.innerHTML = "Click to draw Green Card";
     }
 
     function drawCard(deck) {
       if (deck.length === 0) return null;
-      const idx = Math.floor(Math.random() * deck.length);
-      const card = deck[idx];
-      deck.splice(idx, 1);
-      return card;
+      const i = Math.floor(Math.random() * deck.length);
+      return deck.splice(i, 1)[0];
     }
 
-    let currentDeckA = [];
-    let currentDeckB = [];
-
     blackCardDiv.addEventListener('click', () => {
-      if (currentDeckA.length === 0) currentDeckA = deckA.slice();
+      if (currentDeckA.length === 0) currentDeckA = [...deckA];
       const card = drawCard(currentDeckA);
-      if (!card) {
-        blackCardDiv.innerHTML = "No more cards in deck A";
-        return;
+      if (card) {
+        blackCardDiv.innerHTML = `<img src="deck_a/${card}.png" alt="${card}" />`;
+      } else {
+        blackCardDiv.innerHTML = "No more cards in Deck A";
       }
-      currentBlackCard = card;
-      blackCardDiv.innerHTML = `<img src="deck_a/${card}.png" alt="${card}" loading="lazy" />`;
     });
 
     greenCardDiv.addEventListener('click', () => {
-      if (currentDeckB.length === 0) currentDeckB = deckB.slice();
+      if (currentDeckB.length === 0) currentDeckB = [...deckB];
       const card = drawCard(currentDeckB);
-      if (!card) {
-        greenCardDiv.innerHTML = "No more cards in deck B";
-        return;
+      if (card) {
+        greenCardDiv.innerHTML = `<img src="deck_b/${card}.png" alt="${card}" />`;
+      } else {
+        greenCardDiv.innerHTML = "No more cards in Deck B";
       }
-      currentGreenCard = card;
-      greenCardDiv.innerHTML = `<img src="deck_b/${card}.png" alt="${card}" loading="lazy" />`;
     });
   </script>
 </body>
