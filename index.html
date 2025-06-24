@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Yapping Youths</title>
+  <title>Discord-Themed Card Game</title>
   <style>
     :root {
       --discord-blurple: #5865F2;
@@ -25,7 +25,7 @@
       font-size: 1.2em;
     }
 
-    .splash, .game {
+    .screen {
       display: none;
     }
 
@@ -76,7 +76,14 @@
   </style>
 </head>
 <body>
-  <div class="splash active" id="splash">
+  <div class="screen active" id="passwordScreen">
+    <h1>Enter Password</h1>
+    <input type="password" id="passwordInput" placeholder="Enter Password" />
+    <button onclick="checkPassword()">Submit</button>
+    <div id="passwordError" style="color: red;"></div>
+  </div>
+
+  <div class="screen" id="splash">
     <h1>Enter Players</h1>
     <input type="number" id="playerCount" placeholder="Number of Players (min 3)" min="3" max="12" /><br />
     <div id="playerNames"></div>
@@ -84,8 +91,8 @@
     <div id="playerError" style="color: red;"></div>
   </div>
 
-  <div class="game" id="game">
-    <h2>Yapping Youths</h2>
+  <div class="screen" id="game">
+    <h2>Card Game</h2>
     <div>
       <button onclick="drawCard('a')">Draw Black Card</button><br>
       <img id="blackCardImg" class="card-image" />
@@ -109,6 +116,19 @@
   </div>
 
   <script>
+    const correctPassword = "YappingYouths"; // Change this to your desired password
+
+    function checkPassword() {
+      const input = document.getElementById("passwordInput").value;
+      const error = document.getElementById("passwordError");
+      if (input === correctPassword) {
+        document.getElementById("passwordScreen").classList.remove("active");
+        document.getElementById("splash").classList.add("active");
+      } else {
+        error.innerText = "Incorrect password. Try again.";
+      }
+    }
+
     let players = [];
     const maxPoints = 4;
     const deckLimits = { a: 100, b: 50 };
@@ -180,7 +200,6 @@
     function drawCard(deck) {
       const folder = deck === 'a' ? 'deck_a' : 'deck_b';
       const imgElement = document.getElementById(deck === 'a' ? 'blackCardImg' : 'greenCardImg');
-      const letter = deck;
       const drawPile = drawnCards[deck];
 
       if (drawPile.length === 0) {
@@ -189,16 +208,9 @@
       }
 
       const number = drawPile.pop();
-      const filename = `${letter}${number}.png`;
+      const filename = `${deck}${number}.png`;
       imgElement.src = `${folder}/${filename}`;
       imgElement.alt = `Card ${filename}`;
-    }
-
-    function clearCardImages() {
-      document.getElementById('blackCardImg').src = "";
-      document.getElementById('blackCardImg').alt = "";
-      document.getElementById('greenCardImg').src = "";
-      document.getElementById('greenCardImg').alt = "";
     }
 
     document.getElementById('playerCount').addEventListener('input', function () {
