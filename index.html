@@ -132,7 +132,7 @@
   if (scores[name] < 0) scores[name] = 0;
   updateScores();
   if (scores[name] >= 4) {
-    document.getElementById('winnerMessage').innerHTML = `<h2 style="color: #43b581; font-size: 24px;">🎉 ${name.toUpperCase()} IS THE WINNER! 🎉</h2>`;
+    document.getElementById('winnerMessage').innerHTML = `<h2 style=\"color: #43b581; font-size: 24px;\">🎉 ${name.toUpperCase()} IS THE WINNER! 🎉</h2>`;
   }
 } IS THE WINNER! 🎉</h2>`;
   }
@@ -154,7 +154,9 @@
     function drawCards() {
   const black = getRandomCard('a', 'a');
   const green = getRandomCard('b', 'b');
-  document.getElementById('blackCard').innerHTML = `<img src="${black}" height="150">`;
+  document.getElementById('blackCard').innerHTML = `<img src=\"${black}\" height=\"150\">`;
+  document.getElementById('greenCard').innerHTML = `<img src=\"${green}\" height=\"150\">`;
+}" height="150">`;
   document.getElementById('greenCard').innerHTML = `<img src="${green}" height="150">`;
 }" height="150">`;
       document.getElementById('greenCard').innerHTML = `<img src="${green}" height="150">`;
