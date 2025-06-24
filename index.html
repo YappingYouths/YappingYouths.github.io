@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Yapping Youths Game</title>
   <style>
     body {
@@ -41,6 +41,11 @@
       min-width: 100px;
       text-align: right;
     }
+    #passwordError {
+      color: red;
+      margin-top: 5px;
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -48,11 +53,12 @@
     <h2>Enter Password</h2>
     <input type="password" id="passwordInput" />
     <button onclick="checkPassword()">Submit</button>
+    <div id="passwordError">Incorrect password</div>
   </div>
 
   <div id="splashScreen" class="hidden">
     <h2>Enter Player Info</h2>
-    <input type="number" id="playerCount" placeholder="Number of Players" min="3" max="12">
+    <input type="number" id="playerCount" placeholder="Number of Players" min="3" max="12" />
     <div id="playerNames"></div>
     <button onclick="generateNameInputs()">Set Names</button>
     <button onclick="startGame()">Start Game</button>
@@ -69,7 +75,11 @@
     <div id="playerScores"></div>
     <div id="winnerMessage"></div>
     <h3>How to play:</h3>
-    <p>Choose one player to start as the judge. This player draws a black card and a green card. The other players then try to answer and explain the black card while adhering to the rule of the green card. Whoever explains it best gets a point. First to four points wins.</p>
+    <p>
+      Choose one player to start as the judge. This player draws a black card and a green card.
+      The other players then try to answer and explain the black card while adhering to the rule of the green card.
+      Whoever explains it best gets a point. First to four points wins.
+    </p>
   </div>
 
   <script>
@@ -79,21 +89,23 @@
     let usedCards = { black: new Set(), green: new Set() };
 
     function checkPassword() {
-      const input = document.getElementById('passwordInput').value;
+      const input = document.getElementById("passwordInput").value;
+      const errorDiv = document.getElementById("passwordError");
       if (input === PASSWORD) {
-        document.getElementById('passwordScreen').classList.add('hidden');
-        document.getElementById('splashScreen').classList.remove('hidden');
+        errorDiv.style.display = "none";
+        document.getElementById("passwordScreen").classList.add("hidden");
+        document.getElementById("splashScreen").classList.remove("hidden");
       } else {
-        alert("Incorrect password");
+        errorDiv.style.display = "block";
       }
     }
 
     function generateNameInputs() {
-      const count = parseInt(document.getElementById('playerCount').value);
-      const container = document.getElementById('playerNames');
-      container.innerHTML = '';
+      const count = parseInt(document.getElementById("playerCount").value);
+      const container = document.getElementById("playerNames");
+      container.innerHTML = "";
       for (let i = 0; i < count; i++) {
-        const input = document.createElement('input');
+        const input = document.createElement("input");
         input.placeholder = `Player ${i + 1} name`;
         input.id = `player${i}`;
         container.appendChild(input);
@@ -101,7 +113,7 @@
     }
 
     function startGame() {
-      const count = parseInt(document.getElementById('playerCount').value);
+      const count = parseInt(document.getElementById("playerCount").value);
       players = [];
       for (let i = 0; i < count; i++) {
         const name = document.getElementById(`player${i}`).value.trim();
@@ -110,16 +122,16 @@
         scores[name] = 0;
       }
       updateScores();
-      document.getElementById('splashScreen').classList.add('hidden');
-      document.getElementById('gameScreen').classList.remove('hidden');
+      document.getElementById("splashScreen").classList.add("hidden");
+      document.getElementById("gameScreen").classList.remove("hidden");
     }
 
     function updateScores() {
-      const container = document.getElementById('playerScores');
-      container.innerHTML = '';
-      players.forEach(name => {
-        const div = document.createElement('div');
-        div.className = 'player';
+      const container = document.getElementById("playerScores");
+      container.innerHTML = "";
+      players.forEach((name) => {
+        const div = document.createElement("div");
+        div.className = "player";
         div.innerHTML = `<span class="player-name">${name}: ${scores[name]}</span> 
           <button onclick="changeScore('${name}', 1)">+</button>
           <button onclick="changeScore('${name}', -1)">-</button>`;
@@ -128,15 +140,13 @@
     }
 
     function changeScore(name, delta) {
-  scores[name] += delta;
-  if (scores[name] < 0) scores[name] = 0;
-  updateScores();
-  if (scores[name] >= 4) {
-    document.getElementById('winnerMessage').innerHTML = `<h2 style=\"color: #43b581; font-size: 24px;\">🎉 ${name.toUpperCase()} IS THE WINNER! 🎉</h2>`;
-  }
-} IS THE WINNER! 🎉</h2>`;
-  }
-} is the winner!`;
+      scores[name] += delta;
+      if (scores[name] < 0) scores[name] = 0;
+      updateScores();
+      if (scores[name] >= 4) {
+        document.getElementById(
+          "winnerMessage"
+        ).innerHTML = `<h2 style="color: #43b581; font-size: 24px;">🎉 ${name.toUpperCase()} IS THE WINNER! 🎉</h2>`;
       }
     }
 
@@ -152,22 +162,23 @@
     }
 
     function drawCards() {
-  const black = getRandomCard('a', 'a');
-  const green = getRandomCard('b', 'b');
-  document.getElementById('blackCard').innerHTML = `<img src=\"${black}\" height=\"150\">`;
-  document.getElementById('greenCard').innerHTML = `<img src=\"${green}\" height=\"150\">`;
-}" height="150">`;
-  document.getElementById('greenCard').innerHTML = `<img src="${green}" height="150">`;
-}" height="150">`;
-      document.getElementById('greenCard').innerHTML = `<img src="${green}" height="150">`;
+      const black = getRandomCard("a", "a");
+      const green = getRandomCard("b", "b");
+      document.getElementById(
+        "blackCard"
+      ).innerHTML = `<img src="${black}" height="150">`;
+      document.getElementById(
+        "greenCard"
+      ).innerHTML = `<img src="${green}" height="150">`;
     }
-  function resetDecks() {
-  usedCards.black.clear();
-  usedCards.green.clear();
-  document.getElementById('blackCard').innerHTML = '';
-  document.getElementById('greenCard').innerHTML = '';
-  document.getElementById('winnerMessage').innerHTML = '';
-}
-</script>
+
+    function resetDecks() {
+      usedCards.black.clear();
+      usedCards.green.clear();
+      document.getElementById("blackCard").innerHTML = "";
+      document.getElementById("greenCard").innerHTML = "";
+      document.getElementById("winnerMessage").innerHTML = "";
+    }
+  </script>
 </body>
 </html>
