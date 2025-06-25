@@ -1,48 +1,152 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Card Game</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Yapping Youths</title>
+  <style>
+    body {
+      background-color: #2c2f33;
+      color: #ffffff;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      padding: 20px;
+    }
+    .hidden {
+      display: none;
+    }
+    input, button {
+      padding: 8px;
+      margin: 5px;
+      border-radius: 5px;
+      border: none;
+    }
+    button {
+      background-color: #7289da;
+      color: white;
+      cursor: pointer;
+    }
+    .card {
+      margin: 10px 0;
+      padding: 10px;
+      background-color: #23272a;
+      border-radius: 5px;
+    }
+    .player-score {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 300px;
+    }
+    #rules {
+      border-top: 1px solid #99aab5;
+      padding-top: 20px;
+      margin-top: 20px;
+      color: #99aab5;
+    }
+  </style>
 </head>
 <body>
-    <div id="password-screen" class="screen">
-        <h1>Enter Password</h1>
-        <input type="password" id="password-input" placeholder="Password">
-        <button id="password-submit">Submit</button>
-        <p id="password-error" class="error-message"></p>
-    </div>
+  <div class="container" id="splash">
+    <h1>Yapping Youths</h1>
+    <label>Number of Players (3-12): <input type="number" id="player-count" min="3" max="12"></label><br>
+    <div id="player-names"></div>
+    <button onclick="startGame()">Start Game</button>
+  </div>
 
-    <div id="splash-screen" class="screen hidden">
-        <h1>Welcome to the Card Game!</h1>
-        <label for="player-count">Number of Players:</label>
-        <input type="number" id="player-count" min="1" value="1">
-        <div id="player-names-container"></div>
-        <button id="start-game">Start Game</button>
-    </div>
+  <div class="container hidden" id="main">
+    <h2>Scoreboard</h2>
+    <div id="scoreboard"></div>
+    <h3>Deck A Card:</h3>
+    <div class="card" id="deck-a-card">[None]</div>
+    <button onclick="drawCard('a')">Draw Black Card</button>
+    <h3>Deck B Card:</h3>
+    <div class="card" id="deck-b-card">[None]</div>
+    <button onclick="drawCard('b')">Draw Green Card</button>
 
-    <div id="game-screen" class="screen hidden">
-        <div class="header">
-            <h1>Card Game</h1>
-            <div id="current-player-display"></div>
-        </div>
-        <div id="players-score-container"></div>
-        <div class="card-area">
-            <div id="black-card" class="card">Black Card</div>
-            <div id="green-card" class="card">Green Card</div>
-        </div>
-        <div class="controls">
-            <button id="draw-cards">Draw Cards</button>
-            <button id="next-round">Next Round</button>
-        </div>
-        <div id="winner-message" class="winner-message hidden">YOU ARE THE WINNER!</div>
-        <div class="rules">
-            <h2>How to Play:</h2>
-            <p>Choose one player to start as the judge. This player draws a black card and a green card. The other players then try to answer and explain the black card while adhering to the rule of the green card. Whoever explains it best gets the card. First to four cards wins.</p>
-        </div>
-    </div>
+    <div id="winner-message" class="card hidden">You are the winner!</div>
 
-    <script src="script.js"></script>
+    <div id="rules">
+      <strong>Rules:</strong><br>
+      Draw a black card and a green card. Players must answer the black card with an explanation, and must adhere to the rule of the green card. The judge then picks the best explanation and they receive a point. First to 4 points wins.
+    </div>
+  </div>
+
+  <script>
+    let players = [];
+    let scores = [];
+    const deckA = [];
+    const deckB = [];
+
+    function startGame() {
+      const count = parseInt(document.getElementById("player-count").value);
+      if (count < 3 || count > 12) return alert("Player count must be between 3 and 12");
+      players = [];
+      scores = [];
+      const nameInputs = document.querySelectorAll(".player-name");
+      nameInputs.forEach(input => {
+        players.push(input.value || "Player");
+        scores.push(0);
+      });
+      document.getElementById("splash").classList.add("hidden");
+      document.getElementById("main").classList.remove("hidden");
+      renderScores();
+    }
+
+    document.getElementById("player-count").addEventListener("input", () => {
+      const count = parseInt(document.getElementById("player-count").value);
+      const nameFields = document.getElementById("player-names");
+      nameFields.innerHTML = "";
+      for (let i = 0; i < count; i++) {
+        nameFields.innerHTML += `<input class="player-name" placeholder="Player ${i + 1}"><br>`;
+      }
+    });
+
+    function renderScores() {
+      const board = document.getElementById("scoreboard");
+      board.innerHTML = "";
+      players.forEach((name, i) => {
+        board.innerHTML += `
+          <div class="player-score">
+            <span>${name}: ${scores[i]}</span>
+            <div>
+              <button onclick="changeScore(${i}, 1)">+</button>
+              <button onclick="changeScore(${i}, -1)">-</button>
+            </div>
+          </div>`;
+      });
+    }
+
+    function changeScore(index, delta) {
+      scores[index] += delta;
+      if (scores[index] < 0) scores[index] = 0;
+      if (scores[index] >= 4) {
+        document.getElementById("winner-message").classList.remove("hidden");
+        document.getElementById("winner-message").textContent = `${players[index]} is the winner!`;
+      }
+      renderScores();
+    }
+
+    function loadDecks() {
+      fetch("deck_a/deck.json").then(res => res.json()).then(data => deckA.push(...data));
+      fetch("deck_b/deck.json").then(res => res.json()).then(data => deckB.push(...data));
+    }
+
+    function drawCard(deck) {
+      let card;
+      if (deck === 'a') {
+        card = deckA[Math.floor(Math.random() * deckA.length)];
+        document.getElementById("deck-a-card").textContent = card;
+      } else {
+        card = deckB[Math.floor(Math.random() * deckB.length)];
+        document.getElementById("deck-b-card").textContent = card;
+      }
+    }
+
+    window.onload = loadDecks;
+  </script>
 </body>
 </html>
