@@ -70,23 +70,12 @@ function initializeGame() {
 }
 
 function loadDecks() {
-    // Simulate loading cards from local directories
-    // In a real application, you'd use Node.js or a server to read files
-    // For a client-side only app, you'd pre-load these or fetch from a static JSON
-    blackDeck = [
-        "What is the meaning of life?",
-        "Describe the perfect pizza.",
-        "If you could have any superpower, what would it be and why?",
-        "What's the funniest thing that ever happened to you?",
-        "Explain quantum physics to a five-year-old."
-    ];
-    greenDeck = [
-        "Using only emojis.",
-        "In the style of a Shakespearean sonnet.",
-        "As if you're a grumpy old wizard.",
-        "Like you're pitching a new startup.",
-        "Without using the letter 'e'."
-    ];
+    // Load image filenames from 100 black (a1-a100) and 50 green (b1-b50) cards
+    blackDeck = Array.from({ length: 100 }, (_, i) => `deck_a/a${i + 1}.png`);
+    greenDeck = Array.from({ length: 50 }, (_, i) => `deck_b/b${i + 1}.png`);
+    shuffleDeck(blackDeck);
+    shuffleDeck(greenDeck);
+}
 
     shuffleDeck(blackDeck);
     shuffleDeck(greenDeck);
@@ -142,8 +131,11 @@ drawCardsButton.addEventListener('click', () => {
         alert('No more cards in decks! Resetting decks.');
         loadDecks(); // Reload and shuffle if decks are empty
     }
-    blackCardDisplay.textContent = blackDeck.pop();
-    greenCardDisplay.textContent = greenDeck.pop();
+const blackCard = blackDeck.pop();
+const greenCard = greenDeck.pop();
+blackCardDisplay.innerHTML = `<img src="${blackCard}" alt="Black Card" style="max-width:100%; max-height:100%;" />`;
+greenCardDisplay.innerHTML = `<img src="${greenCard}" alt="Green Card" style="max-width:100%; max-height:100%;" />`;
+
 });
 
 nextRoundButton.addEventListener('click', () => {
