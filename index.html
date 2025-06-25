@@ -3,73 +3,106 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Yapping Youths</title>
+  <title>Discord-Themed Card Game</title>
   <style>
+    :root {
+      --discord-blurple: #5865F2;
+      --discord-dark: #2C2F33;
+      --discord-gray: #99AAB5;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      background-color: #2c2f33;
-      color: #ffffff;
-      font-family: Arial, sans-serif;
       margin: 0;
-      padding: 0;
+      font-family: sans-serif;
+      background-color: var(--discord-dark);
+      color: white;
+      text-align: center;
+      padding: 2em;
+      font-size: 1.2em;
     }
-    .container {
-      padding: 20px;
-    }
-    .hidden {
+
+    .splash, .game {
       display: none;
     }
-    input, button {
-      padding: 8px;
-      margin: 5px;
-      border-radius: 5px;
-      border: none;
+
+    .active {
+      display: block;
     }
+
+    input, button {
+      padding: 1em;
+      margin: 1em;
+      border: none;
+      border-radius: 0.5em;
+      font-size: 1em;
+    }
+
+    input {
+      width: 80%;
+    }
+
     button {
-      background-color: #7289da;
+      background-color: var(--discord-blurple);
       color: white;
       cursor: pointer;
     }
-    .card {
-      margin: 10px 0;
-      padding: 10px;
-      background-color: #23272a;
-      border-radius: 5px;
+
+    .player {
+      margin: 1em 0;
     }
-    .player-score {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      max-width: 300px;
+
+    .winner {
+      font-size: 1.4em;
+      color: lime;
+      margin-top: 1em;
     }
-    #rules {
-      border-top: 1px solid #99aab5;
-      padding-top: 20px;
-      margin-top: 20px;
-      color: #99aab5;
+
+    .rules {
+      font-size: 1em;
+      color: var(--discord-gray);
+      margin-top: 2em;
+      border-top: 1px solid var(--discord-gray);
+      padding-top: 1em;
+    }
+
+    .card-image {
+      max-width: 90%;
+      margin: 1em auto;
     }
   </style>
 </head>
 <body>
-  <div class="container" id="splash">
-    <h1>Yapping Youths</h1>
-    <label>Number of Players (3-12): <input type="number" id="player-count" min="3" max="12"></label><br>
-    <div id="player-names"></div>
+  <div class="splash active" id="splash">
+    <h1>Enter Players</h1>
+    <input type="number" id="playerCount" placeholder="Number of Players (min 3)" min="3" max="12" /><br />
+    <div id="playerNames"></div>
     <button onclick="startGame()">Start Game</button>
+    <div id="playerError" style="color: red;"></div>
   </div>
 
-  <div class="container hidden" id="main">
-    <h2>Scoreboard</h2>
-    <div id="scoreboard"></div>
-    <h3>Deck A Card:</h3>
-    <div class="card" id="deck-a-card">[None]</div>
-    <button onclick="drawCard('a')">Draw Black Card</button>
-    <h3>Deck B Card:</h3>
-    <div class="card" id="deck-b-card">[None]</div>
-    <button onclick="drawCard('b')">Draw Green Card</button>
+  <div class="game" id="game">
+    <h2>Card Game</h2>
+    <div>
+      <button onclick="drawCard('a')">Draw Black Card</button><br>
+      <img id="blackCardImg" class="card-image" />
+    </div>
+    <div>
+      <button onclick="drawCard('b')">Draw Green Card</button><br>
+      <img id="greenCardImg" class="card-image" />
+    </div>
 
-    <div id="winner-message" class="card hidden">You are the winner!</div>
+    <div>
+      <button onclick="resetDecks()" style="background-color: #ff5555;">Reset Decks</button>
+    </div>
 
-    <div id="rules">
+    <div id="players"></div>
+    <div class="winner" id="winnerMsg"></div>
+
+    <div class="rules">
       <strong>Rules:</strong><br>
       Draw a black card and a green card. Players must answer the black card with an explanation, and must adhere to the rule of the green card. The judge then picks the best explanation and they receive a point. First to 4 points wins.
     </div>
@@ -77,76 +110,105 @@
 
   <script>
     let players = [];
-    let scores = [];
-    const deckA = [];
-    const deckB = [];
+    const maxPoints = 4;
+    const deckLimits = { a: 100, b: 50 };
+    let drawnCards = { a: [], b: [] };
 
     function startGame() {
-      const count = parseInt(document.getElementById("player-count").value);
-      if (count < 3 || count > 12) return alert("Player count must be between 3 and 12");
+      const count = parseInt(document.getElementById('playerCount').value);
+      const errorDiv = document.getElementById('playerError');
+      if (count < 3) {
+        errorDiv.innerText = "You need at least 3 players to start.";
+        return;
+      }
+      errorDiv.innerText = "";
+      const names = document.querySelectorAll('.nameInput');
       players = [];
-      scores = [];
-      const nameInputs = document.querySelectorAll(".player-name");
-      nameInputs.forEach(input => {
-        players.push(input.value || "Player");
-        scores.push(0);
+      names.forEach((input, i) => {
+        players.push({ name: input.value || `Player ${i + 1}`, points: 0 });
       });
-      document.getElementById("splash").classList.add("hidden");
-      document.getElementById("main").classList.remove("hidden");
-      renderScores();
+      renderPlayers();
+      document.getElementById('splash').classList.remove('active');
+      document.getElementById('game').classList.add('active');
+
+      initializeDecks();
     }
 
-    document.getElementById("player-count").addEventListener("input", () => {
-      const count = parseInt(document.getElementById("player-count").value);
-      const nameFields = document.getElementById("player-names");
-      nameFields.innerHTML = "";
-      for (let i = 0; i < count; i++) {
-        nameFields.innerHTML += `<input class="player-name" placeholder="Player ${i + 1}"><br>`;
-      }
-    });
+    function initializeDecks() {
+      drawnCards.a = shuffle(Array.from({ length: deckLimits.a }, (_, i) => i + 1));
+      drawnCards.b = shuffle(Array.from({ length: deckLimits.b }, (_, i) => i + 1));
+      clearCardImages();
+      document.getElementById('winnerMsg').innerText = "";
+    }
 
-    function renderScores() {
-      const board = document.getElementById("scoreboard");
-      board.innerHTML = "";
-      players.forEach((name, i) => {
-        board.innerHTML += `
-          <div class="player-score">
-            <span>${name}: ${scores[i]}</span>
-            <div>
-              <button onclick="changeScore(${i}, 1)">+</button>
-              <button onclick="changeScore(${i}, -1)">-</button>
-            </div>
-          </div>`;
+    function resetDecks() {
+      initializeDecks();
+      alert("Decks have been reset and reshuffled.");
+    }
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    function renderPlayers() {
+      const container = document.getElementById('players');
+      container.innerHTML = '';
+      players.forEach((player, index) => {
+        container.innerHTML += `
+          <div class="player">
+            ${player.name}: ${player.points} points
+            <button onclick="changePoints(${index}, 1)">+</button>
+            <button onclick="changePoints(${index}, -1)">-</button>
+          </div>
+        `;
       });
     }
 
-    function changeScore(index, delta) {
-      scores[index] += delta;
-      if (scores[index] < 0) scores[index] = 0;
-      if (scores[index] >= 4) {
-        document.getElementById("winner-message").classList.remove("hidden");
-        document.getElementById("winner-message").textContent = `${players[index]} is the winner!`;
+    function changePoints(index, delta) {
+      players[index].points += delta;
+      if (players[index].points < 0) players[index].points = 0;
+      if (players[index].points >= maxPoints) {
+        document.getElementById('winnerMsg').innerText = `${players[index].name} is the winner!`;
       }
-      renderScores();
-    }
-
-    function loadDecks() {
-      fetch("deck_a/deck.json").then(res => res.json()).then(data => deckA.push(...data));
-      fetch("deck_b/deck.json").then(res => res.json()).then(data => deckB.push(...data));
+      renderPlayers();
     }
 
     function drawCard(deck) {
-      let card;
-      if (deck === 'a') {
-        card = deckA[Math.floor(Math.random() * deckA.length)];
-        document.getElementById("deck-a-card").textContent = card;
-      } else {
-        card = deckB[Math.floor(Math.random() * deckB.length)];
-        document.getElementById("deck-b-card").textContent = card;
+      const folder = deck === 'a' ? 'deck_a' : 'deck_b';
+      const imgElement = document.getElementById(deck === 'a' ? 'blackCardImg' : 'greenCardImg');
+      const letter = deck;
+      const drawPile = drawnCards[deck];
+
+      if (drawPile.length === 0) {
+        alert(`All cards from deck ${deck.toUpperCase()} have been used.`);
+        return;
       }
+
+      const number = drawPile.pop();
+      const filename = `${letter}${number}.png`;
+      imgElement.src = `${folder}/${filename}`;
+      imgElement.alt = `Card ${filename}`;
     }
 
-    window.onload = loadDecks;
+    function clearCardImages() {
+      document.getElementById('blackCardImg').src = "";
+      document.getElementById('blackCardImg').alt = "";
+      document.getElementById('greenCardImg').src = "";
+      document.getElementById('greenCardImg').alt = "";
+    }
+
+    document.getElementById('playerCount').addEventListener('input', function () {
+      const count = parseInt(this.value);
+      const container = document.getElementById('playerNames');
+      container.innerHTML = '';
+      for (let i = 0; i < count; i++) {
+        container.innerHTML += `<input class='nameInput' placeholder='Player ${i + 1} Name'><br />`;
+      }
+    });
   </script>
 </body>
 </html>
